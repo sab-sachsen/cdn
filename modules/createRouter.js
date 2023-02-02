@@ -40,10 +40,6 @@ function createRouter() {
         require("./middleware/requireAuth")("blacklist.remove"),
         require("./actions/removeFromBlacklist")
       );
-
-      // if (process.env.NODE_ENV !== "test") {
-      //   app.get("/stats", require("./actions/showStats"));
-      // }
     })
   );
 
@@ -81,11 +77,6 @@ function createRouter() {
       );
     })
   );
-
-  // TODO: Remove
-  // if (process.env.NODE_ENV !== "test") {
-  //   app.get("/_stats", require("./actions/showStats"));
-  // }
 
   app.get(
     "*",

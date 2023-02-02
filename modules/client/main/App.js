@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { Global, css, jsx } from '@emotion/core';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import formatBytes from 'pretty-bytes';
 import formatDate from 'date-fns/format';
@@ -99,26 +99,6 @@ function Stats({ data }) {
 }
 
 export default function App() {
-  let [stats, setStats] = useState(
-    typeof window === 'object' &&
-      window.localStorage &&
-      window.localStorage.savedStats
-      ? JSON.parse(window.localStorage.savedStats)
-      : null
-  );
-  let hasStats = !!(stats && !stats.error);
-  let stringStats = JSON.stringify(stats);
-
-  useEffect(() => {
-    window.localStorage.savedStats = stringStats;
-  }, [stringStats]);
-
-  useEffect(() => {
-    fetch('/api/stats?period=last-month')
-      .then(res => res.json())
-      .then(setStats);
-  }, []);
-
   return (
     <Fragment>
       <Global styles={globalStyles} />
@@ -155,8 +135,6 @@ export default function App() {
             >
               unpkg.com/:package@:version/:file
             </div>
-
-            {hasStats && <Stats data={stats} />}
           </header>
 
           <h3 css={{ fontSize: '1.6em' }} id="examples">
@@ -180,7 +158,9 @@ export default function App() {
 
           <p>
             You may also use a{' '}
-            <Link href="https://docs.npmjs.com/about-semantic-versioning">semver range</Link>{' '}
+            <Link href="https://docs.npmjs.com/about-semantic-versioning">
+              semver range
+            </Link>{' '}
             or a <Link href="https://docs.npmjs.com/cli/dist-tag">tag</Link>{' '}
             instead of a fixed version number, or omit the version/tag entirely
             to use the <code>latest</code> tag.
@@ -342,14 +322,6 @@ export default function App() {
             The unpkg CDN is powered by{' '}
             <Link href="https://www.cloudflare.com">Cloudflare</Link>, one of
             the world&apos;s largest and fastest cloud network platforms.{' '}
-            {hasStats && (
-              <span>
-                In the past month, Cloudflare served over{' '}
-                <strong>{formatBytes(stats.totals.bandwidth.all)}</strong> to{' '}
-                <strong>{formatNumber(stats.totals.uniques.all)}</strong> unique
-                unpkg users all over the world.
-              </span>
-            )}
           </p>
 
           <div

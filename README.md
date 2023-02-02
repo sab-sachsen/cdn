@@ -1,14 +1,14 @@
-# UNPKG &middot; [![Travis][build-badge]][build]
+# CDN based on [UNPKG](https://github.com/mjackson/unpkg)
 
-[build-badge]: https://img.shields.io/travis/mjackson/unpkg/master.svg?style=flat-square
-[build]: https://travis-ci.org/mjackson/unpkg
+## Usage
 
-[UNPKG](https://unpkg.com) is a fast, global [content delivery network](https://en.wikipedia.org/wiki/Content_delivery_network) for everything on [npm](https://www.npmjs.com/).
+### Running local stack
 
-### Documentation
+- Use correct Node version `nvm use`
+- Install dependencies `npm install`
+- Build `npm run build`
+- Start locally in node `npm start`
 
-Please visit [the UNPKG website](https://unpkg.com) to learn more about how to use it.
+### Run in Docker
 
-### Sponsors
-
-Our sponsors and backers are listed [in SPONSORS.md](SPONSORS.md).
+Simply run `npm run start:docker` and it will build and run the container.

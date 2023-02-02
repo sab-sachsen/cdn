@@ -13,7 +13,7 @@ services:
   server:
     build: .
     image: sab/cdn:latest
-    command: node_modules/.bin/nodemon --ignore modules/client server.js
+    command: node_modules/.bin/nodemon --ignore modules/client dist/server.js
     env_file: .env
     environment:
       - CACHE_URL=redis://data:6379
@@ -25,16 +25,3 @@ services:
       - localnet
     ports:
       - "8080:8080"
-  # worker:
-  #   build: .
-  #   command: node_modules/.bin/nodemon --ignore modules/client modules/ingestLogsEveryMinute.js
-  #   env_file: .env
-  #   environment:
-  #     - DATA_URL=redis://data:6379
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - data
-  #   networks:
-  #     - localnet

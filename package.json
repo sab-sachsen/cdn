@@ -4,13 +4,13 @@
   "description": "The CDN for everything on npm",
   "scripts": {
     "postinstall": "npm run build",
-    "build": "rollup -c",
-    "start": "docker compose up",
     "clean": "git clean -e '!/.env' -fdX .",
     "lint": "eslint .",
-    "serve": "nodemon -w server.js server.js",
     "test": "jest",
-    "watch": "rollup -c -w"
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
+    "start": "nodemon -w dist dist/server.js",
+    "start:docker": "docker compose up --build"
   },
   "dependencies": {
     "@babel/core": "7.20.12",

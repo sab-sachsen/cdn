@@ -18,7 +18,7 @@ const manifest = entryManifest();
 const client = ['browse', 'main'].map(entryName => {
   return {
     external: ['@emotion/core', 'react', 'react-dom'],
-    input: `modules/client/${entryName}.js`,
+    input: `src/client/${entryName}.js`,
     output: {
       format: 'iife',
       dir: 'public/_client',
@@ -72,8 +72,8 @@ const dependencies = (
 
 const server = {
   external: builtinModules.concat(dependencies),
-  input: 'modules/server.js',
-  output: { file: 'server.js', format: 'cjs' },
+  input: 'src/server.js',
+  output: { file: 'dist/server.js', format: 'cjs' },
   moduleContext: {
     'node_modules/react-icons/lib/esm/iconBase.js': 'global'
   },

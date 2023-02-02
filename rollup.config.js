@@ -3,16 +3,21 @@ const git = require('git-rev-sync');
 
 const babel = require('rollup-plugin-babel');
 const commonjs = require('rollup-plugin-commonjs');
+const copy = require('rollup-plugin-copy');
 const json = require('rollup-plugin-json');
 const replace = require('rollup-plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
 const url = require('rollup-plugin-url');
 
 const entryManifest = require('./plugins/entryManifest');
-const pkg = require('./package.json');
-
+const { dependencies, devDependencies } = require('./package.json');
+const SKIP_WARNINGS = [
+  'CIRCULAR_DEPENDENCY',
+  'EVAL',
+  'THIS_IS_UNDEFINED',
+  'UNRESOLVED_IMPORT'
+];
 const buildId = process.env.BUILD_ID || git.short();
-
 const manifest = entryManifest();
 
 const client = ['browse', 'main'].map(entryName => {
@@ -21,7 +26,7 @@ const client = ['browse', 'main'].map(entryName => {
     input: `src/client/${entryName}.js`,
     output: {
       format: 'iife',
-      dir: 'public/_client',
+      dir: 'dist/client',
       entryFileNames: '[name]-[hash].js',
       globals: {
         react: 'React',
@@ -29,11 +34,17 @@ const client = ['browse', 'main'].map(entryName => {
         '@emotion/core': 'emotionCore'
       }
     },
+    onwarn(message, next) {
+      if (SKIP_WARNINGS.includes(message.code)) {
+        return;
+      }
+      next(message);
+    },
     moduleContext: {
       'node_modules/react-icons/lib/esm/iconBase.js': 'window'
     },
     plugins: [
-      manifest.record({ publicPath: '/_client/' }),
+      manifest.record({ publicPath: '/client/' }),
       babel({ exclude: /node_modules/ }),
       json(),
       resolve(),
@@ -56,23 +67,20 @@ const client = ['browse', 'main'].map(entryName => {
       }),
       url({
         limit: 5 * 1024,
-        publicPath: '/_client/'
+        publicPath: '/client/'
       })
     ]
   };
 });
 
-const dependencies = (
-  process.env.NODE_ENV === 'development'
-    ? Object.keys(pkg.dependencies).concat(
-        Object.keys(pkg.devDependencies || {})
-      )
-    : Object.keys(pkg.dependencies)
-).concat('react-dom/server');
-
 const server = {
-  external: builtinModules.concat(dependencies),
-  input: 'src/server.js',
+  external: [
+    'react-dom/server',
+    ...builtinModules,
+    ...Object.keys(dependencies),
+    ...Object.keys(devDependencies)
+  ],
+  input: 'src/server/index.js',
   output: { file: 'dist/server.js', format: 'cjs' },
   moduleContext: {
     'node_modules/react-icons/lib/esm/iconBase.js': 'global'
@@ -85,12 +93,13 @@ const server = {
     commonjs(),
     url({
       limit: 5 * 1024,
-      publicPath: '/_client/',
+      publicPath: '/client/',
       emitFiles: false
     }),
     replace({
       'process.env.BUILD_ID': JSON.stringify(buildId)
-    })
+    }),
+    copy({ targets: [{ src: 'public', dest: 'dist/public' }] })
   ]
 };
 

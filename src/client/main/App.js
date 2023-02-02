@@ -10,8 +10,6 @@ import { formatNumber, formatPercent } from '../utils/format.js';
 import { fontSans, fontMono } from '../utils/style.js';
 
 import { TwitterIcon, GitHubIcon } from './Icons.js';
-import CloudflareLogo from './images/CloudflareLogo.png';
-import FlyLogo from './images/FlyLogo.png';
 
 const buildId = process.env.BUILD_ID;
 
@@ -302,66 +300,6 @@ export default function App() {
             That&apos;s it! Now when you <code>npm publish</code> you&apos;ll
             have a version available on unpkg as well.
           </p>
-
-          <h3 css={{ fontSize: '1.6em' }} id="about">
-            About
-          </h3>
-
-          <p>
-            unpkg is an{' '}
-            <Link href="https://github.com/mjackson/unpkg">open source</Link>{' '}
-            project built and maintained by{' '}
-            <Link href="https://twitter.com/mjackson">Michael Jackson</Link>.
-            unpkg is not affiliated with or supported by npm, Inc. in any way.
-            Please do not contact npm for help with unpkg. Instead, please reach
-            out to <Link href="https://twitter.com/unpkg">@unpkg</Link> with any
-            questions or concerns.
-          </p>
-
-          <p>
-            The unpkg CDN is powered by{' '}
-            <Link href="https://www.cloudflare.com">Cloudflare</Link>, one of
-            the world&apos;s largest and fastest cloud network platforms.{' '}
-          </p>
-
-          <div
-            css={{
-              margin: '4em 0',
-              display: 'flex',
-              justifyContent: 'center'
-            }}
-          >
-            <AboutLogo>
-              <a href="https://www.cloudflare.com">
-                <AboutLogoImage
-                  alt="Cloudflare"
-                  src={CloudflareLogo}
-                  height="100"
-                />
-              </a>
-            </AboutLogo>
-          </div>
-
-          <p>
-            The origin server runs on auto-scaling infrastructure provided by{' '}
-            <Link href="https://fly.io/">Fly.io</Link>. The app servers run in
-            17 cities around the world, and come and go based on active
-            requests.
-          </p>
-
-          <div
-            css={{
-              margin: '4em 0 0',
-              display: 'flex',
-              justifyContent: 'center'
-            }}
-          >
-            <AboutLogo>
-              <a href="https://fly.io">
-                <AboutLogoImage alt="Fly.io" src={FlyLogo} width="320" />
-              </a>
-            </AboutLogo>
-          </div>
         </div>
       </div>
 

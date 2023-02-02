@@ -1,5 +1,8 @@
 # CDN based on [UNPKG](https://github.com/mjackson/unpkg)
 
+This started out as a fork from [UNPKG](https://github.com/mjackson/unpkg),
+but has since diverged quite a bit as it has been modified to fulfill our needs.
+
 ## Usage
 
 ### Running local stack

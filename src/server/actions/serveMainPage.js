@@ -1,6 +1,6 @@
 import { renderToString, renderToStaticMarkup } from 'react-dom/server';
 
-import MainApp from '../client/main/App.js';
+import MainApp from '../../client/main/App.js';
 import MainTemplate from '../templates/MainTemplate.js';
 import getScripts from '../utils/getScripts.js';
 import { createElement, createHTML } from '../utils/markup.js';

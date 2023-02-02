@@ -1,7 +1,7 @@
 import { renderToString, renderToStaticMarkup } from 'react-dom/server';
 import semver from 'semver';
 
-import BrowseApp from '../client/browse/App.js';
+import BrowseApp from '../../client/browse/App.js';
 import MainTemplate from '../templates/MainTemplate.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import getScripts from '../utils/getScripts.js';

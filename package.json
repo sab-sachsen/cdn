@@ -1,5 +1,5 @@
 {
-  "name": "unpkg",
+  "name": "@sab/cdn",
   "private": true,
   "description": "The CDN for everything on npm",
   "scripts": {

@@ -1,5 +1,5 @@
 const builtinModules = require('module').builtinModules;
-const execSync = require('child_process').execSync;
+const git = require('git-rev-sync');
 
 const babel = require('rollup-plugin-babel');
 const commonjs = require('rollup-plugin-commonjs');
@@ -12,9 +12,7 @@ const url = require('rollup-plugin-url');
 const entryManifest = require('./plugins/entryManifest');
 const pkg = require('./package.json');
 
-const buildId =
-  process.env.BUILD_ID ||
-  execSync('git rev-parse --short HEAD').toString().trim();
+const buildId = process.env.BUILD_ID || git.short();
 
 const manifest = entryManifest();
 
@@ -66,9 +64,12 @@ const client = ['browse', 'main'].map(entryName => {
   };
 });
 
-const dependencies = (process.env.NODE_ENV === 'development'
-  ? Object.keys(pkg.dependencies).concat(Object.keys(pkg.devDependencies || {}))
-  : Object.keys(pkg.dependencies)
+const dependencies = (
+  process.env.NODE_ENV === 'development'
+    ? Object.keys(pkg.dependencies).concat(
+        Object.keys(pkg.devDependencies || {})
+      )
+    : Object.keys(pkg.dependencies)
 ).concat('react-dom/server');
 
 const server = {

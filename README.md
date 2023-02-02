@@ -14,4 +14,7 @@ but has since diverged quite a bit as it has been modified to fulfill our needs.
 
 ### Run in Docker
 
-Simply run `npm run start:docker` and it will build and run the container.
+> You must provide a `.env.docker` file in the root of your project. This file may contain
+> variables to configure your instance, have a look at the [sample file `.env.docker.sample`](.env.docker.sample).
+
+Simply run `npm run start:docker` and it will install dependencies, build and run the container.

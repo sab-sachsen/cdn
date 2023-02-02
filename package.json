@@ -3,7 +3,6 @@
   "private": true,
   "description": "The CDN for everything on npm",
   "scripts": {
-    "postinstall": "npm run build",
     "clean": "git clean -e '!/.env' -fdX .",
     "lint": "eslint .",
     "test": "jest",

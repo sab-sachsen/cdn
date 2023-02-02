@@ -1,19 +1,25 @@
-version: "3"
+version: "3.8"
 
 networks:
   localnet: {}
 
-services:
+volumes:
+  sab-cache-data: {}
 
+services:
   data:
     image: redis
+    container_name: "sab-cache"
     networks:
       - localnet
+    volumes:
+      - sab-cache-data:/data
 
   server:
     build: .
     image: sab/cdn:latest
-    command: node_modules/.bin/nodemon dist/server.js
+    container_name: "sab-cdn"
+    restart: always
     env_file: .env.docker
     environment:
       - CACHE_URL=redis://data:6379

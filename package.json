@@ -1,7 +1,7 @@
 {
   "name": "@sab/cdn",
   "private": true,
-  "description": "The CDN for everything on npm",
+  "description": "A CDN service for frontend artifacts within the SAB infrastructure",
   "scripts": {
     "clean": "git clean -e '!/.env' -e '!/.env.docker' -fdX .",
     "lint": "eslint .",

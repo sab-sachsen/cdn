@@ -7,6 +7,6 @@ RUN npm ci
 RUN npm run build
 
 ENV PORT 8080
-CMD ["node", "server.js"]
+CMD ["node_modules/.bin/nodemon", "dist/server.js"]
 
 EXPOSE 8080

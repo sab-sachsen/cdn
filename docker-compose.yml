@@ -14,7 +14,7 @@ services:
     build: .
     image: sab/cdn:latest
     command: node_modules/.bin/nodemon --ignore modules/client dist/server.js
-    env_file: .env
+    env_file: .env.docker
     environment:
       - CACHE_URL=redis://data:6379
       - DATA_URL=redis://data:6379

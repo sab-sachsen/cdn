@@ -4,6 +4,7 @@ firebase-debug.log*
 npm-debug.log*
 
 /.env
+/.env.docker
 /node_modules/
 /public/_client/
 /secrets.tar

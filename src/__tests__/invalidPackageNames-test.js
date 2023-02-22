@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import createServer from '../createServer';
+import createServer from '../server/createServer';
 
 describe('Invalid package names', () => {
   let server;

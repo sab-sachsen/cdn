@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import createServer from '../createServer.js';
+import createServer from '../server/createServer.js';
 
 describe('A request for a directory', () => {
   let server;
@@ -21,7 +21,7 @@ describe('A request for a directory', () => {
   });
 
   describe('when a .json file exists with the same name', () => {
-    it('is redirected to the .json file');
+    it('is redirected to the .json file', () => {});
   });
 
   describe('when it contains an index.js file', () => {

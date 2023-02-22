@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import createServer from '../createServer.js';
+import createServer from '../server/createServer.js';
 
 describe('A request for metadata', () => {
   let server;

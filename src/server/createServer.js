@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import serveDirectoryMetadata from './actions/serveDirectoryMetadata.js';
 import serveFileMetadata from './actions/serveFileMetadata.js';
 import serveFile from './actions/serveFile.js';
-import serveMainPage from './actions/serveMainPage.js';
 import serveModule from './actions/serveModule.js';
 
 import allowQuery from './middleware/allowQuery.js';
@@ -37,9 +36,6 @@ export default function createServer() {
     app.use(express.static('public', { maxAge: '1y' }));
 
     app.use(requestLog);
-
-    // serve main page only
-    app.get('/', serveMainPage);
 
     // We need to route in this weird way because Express
     // doesn't have a way to route based on query params.

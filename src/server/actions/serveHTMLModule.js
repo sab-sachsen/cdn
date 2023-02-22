@@ -1,12 +1,12 @@
 import etag from 'etag';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 
 import getContentTypeHeader from '../utils/getContentTypeHeader.js';
 import rewriteBareModuleIdentifiers from '../utils/rewriteBareModuleIdentifiers.js';
 
 export default function serveHTMLModule(req, res) {
   try {
-    const $ = cheerio.load(req.entry.content.toString('utf8'));
+    const $ = load(req.entry.content.toString('utf8'));
 
     $('script[type=module]').each((index, element) => {
       $(element).html(

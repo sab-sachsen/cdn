@@ -2,9 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 
-import serveDirectoryBrowser from './actions/serveDirectoryBrowser.js';
 import serveDirectoryMetadata from './actions/serveDirectoryMetadata.js';
-import serveFileBrowser from './actions/serveFileBrowser.js';
 import serveFileMetadata from './actions/serveFileMetadata.js';
 import serveFile from './actions/serveFile.js';
 import serveMainPage from './actions/serveMainPage.js';
@@ -13,7 +11,6 @@ import serveModule from './actions/serveModule.js';
 import allowQuery from './middleware/allowQuery.js';
 import findEntry from './middleware/findEntry.js';
 import noQuery from './middleware/noQuery.js';
-import redirectLegacyURLs from './middleware/redirectLegacyURLs.js';
 import requestLog from './middleware/requestLog.js';
 import validateFilename from './middleware/validateFilename.js';
 import validatePackagePathname from './middleware/validatePackagePathname.js';
@@ -41,34 +38,8 @@ export default function createServer() {
 
     app.use(requestLog);
 
+    // serve main page only
     app.get('/', serveMainPage);
-
-    app.use(redirectLegacyURLs);
-
-    app.use(
-      '/browse',
-      createApp(app => {
-        app.enable('strict routing');
-
-        app.get(
-          '*/',
-          noQuery(),
-          validatePackagePathname,
-          validatePackageName,
-          validatePackageVersion,
-          serveDirectoryBrowser
-        );
-
-        app.get(
-          '*',
-          noQuery(),
-          validatePackagePathname,
-          validatePackageName,
-          validatePackageVersion,
-          serveFileBrowser
-        );
-      })
-    );
 
     // We need to route in this weird way because Express
     // doesn't have a way to route based on query params.

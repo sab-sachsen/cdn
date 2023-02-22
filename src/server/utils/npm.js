@@ -25,9 +25,9 @@ const oneSecond = 1000;
 const oneMinute = oneSecond * 60;
 
 const cache = new LRUCache({
-  max: oneMegabyte * 40,
-  length: Buffer.byteLength,
-  maxAge: oneSecond
+  maxSize: oneMegabyte * 40,
+  sizeCalculation: Buffer.byteLength,
+  ttl: oneSecond
 });
 
 const notFound = '';
@@ -47,7 +47,6 @@ function encodePackageName(packageName) {
     ? `@${encodeURIComponent(packageName.substring(1))}`
     : encodeURIComponent(packageName);
 }
-
 async function fetchPackageInfo(packageName, log) {
   const name = encodePackageName(packageName);
   const infoURL = `${npmRegistryURL}/${name}`;
@@ -109,11 +108,11 @@ export async function getVersionsAndTags(packageName, log) {
   const value = await fetchVersionsAndTags(packageName, log);
 
   if (value == null) {
-    cache.set(cacheKey, notFound, 5 * oneMinute);
+    cache.set(cacheKey, notFound, { ttl: 5 * oneMinute });
     return null;
   }
 
-  cache.set(cacheKey, JSON.stringify(value), oneMinute);
+  cache.set(cacheKey, JSON.stringify(value), { ttl: oneMinute });
   return value;
 }
 
@@ -163,11 +162,11 @@ export async function getPackageConfig(packageName, version, log) {
   const value = await fetchPackageConfig(packageName, version, log);
 
   if (value == null) {
-    cache.set(cacheKey, notFound, 5 * oneMinute);
+    cache.set(cacheKey, notFound, { ttl: 5 * oneMinute });
     return null;
   }
 
-  cache.set(cacheKey, JSON.stringify(value), oneMinute);
+  cache.set(cacheKey, JSON.stringify(value), { ttl: oneMinute });
   return value;
 }
 

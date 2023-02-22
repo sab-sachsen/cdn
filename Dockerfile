@@ -4,9 +4,10 @@ WORKDIR /app
 
 COPY . .
 RUN npm ci
+RUN npm install -g pm2
 RUN npm run build
 
 ENV PORT 8080
-CMD ["node_modules/.bin/nodemon", "dist/server.js"]
+CMD ["pm2-runtime", "dist/server.js"]
 
 EXPOSE 8080

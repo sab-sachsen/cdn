@@ -1,4 +1,4 @@
-import createPackageURL from '../utils/create-package-url.js';
+import createPackageURL from '../utils/create-package-url';
 
 function filenameRedirect(req, res) {
   let filename;
@@ -10,7 +10,7 @@ function filenameRedirect(req, res) {
       // https://nodejs.org/api/esm.html#esm_code_package_json_code_code_type_code_field
       if (req.packageConfig.type === 'module') {
         // Use whatever is in pkg.main or index.js
-        filename = req.packageConfig.main || '/index.js';
+        filename = req.packageConfig.main || '/index';
       } else if (
         req.packageConfig.main &&
         /\.mjs$/.test(req.packageConfig.main)
@@ -45,7 +45,7 @@ function filenameRedirect(req, res) {
     // Deprecated, see #63
     filename = req.packageConfig.browser;
   } else {
-    filename = req.packageConfig.main || '/index.js';
+    filename = req.packageConfig.main || '/index';
   }
 
   // Redirect to the exact filename so relative imports

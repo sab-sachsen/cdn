@@ -1,4 +1,4 @@
-import createSearch from './create-search.js';
+import createSearch from './create-search';
 
 export default function createPackageURL(
   packageName,

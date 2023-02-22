@@ -1,4 +1,4 @@
-import getContentType from './getContentType.js';
+import getContentType from './getContentType';
 
 describe('getContentType', () => {
   it('returns text/plain for LICENSE|README|CHANGES|AUTHORS|Makefile', () => {

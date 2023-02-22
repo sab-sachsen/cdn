@@ -1,12 +1,12 @@
 import path from 'path';
 import tar from 'tar-stream';
 
-import asyncHandler from '../utils/async-andler.js';
-import bufferStream from '../utils/buffer-stream.js';
-import createPackageURL from '../utils/create-package-url.js';
-import getContentType from '../utils/get-content-type.js';
-import getIntegrity from '../utils/get-integrity.js';
-import { getPackage } from '../utils/npm.js';
+import asyncHandler from '../utils/async-andler';
+import bufferStream from '../utils/buffer-stream';
+import createPackageURL from '../utils/create-package-url';
+import getContentType from '../utils/get-content-type';
+import getIntegrity from '../utils/get-integrity';
+import { getPackage } from '../utils/npm';
 
 function fileRedirect(req, res, entry) {
   // Redirect to the file with the extension so it's

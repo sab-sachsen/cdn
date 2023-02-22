@@ -1,4 +1,4 @@
-import createServer from './create-server.js';
+import createServer from './create-server';
 
 const server = createServer();
 const port = process.env.PORT || '8080';

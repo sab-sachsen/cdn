@@ -2,19 +2,19 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 
-import serveDirectoryMetadata from './actions/serve-directory-metadata.js';
-import serveFileMetadata from './actions/serve-file-metadata.js';
-import serveFile from './actions/serve-file.js';
-import serveModule from './actions/serve-module.js';
+import serveDirectoryMetadata from './actions/serve-directory-metadata';
+import serveFileMetadata from './actions/serve-file-metadata';
+import serveFile from './actions/serve-file';
+import serveModule from './actions/serve-module';
 
-import allowQuery from './middleware/allow-query.js';
-import findEntry from './middleware/find-entry.js';
-import noQuery from './middleware/no-query.js';
-import requestLog from './middleware/request-log.js';
-import validateFilename from './middleware/validate-filename.js';
-import validatePackagePathname from './middleware/validate-package-pathname.js';
-import validatePackageName from './middleware/validate-package-name.js';
-import validatePackageVersion from './middleware/validate-package-version.js';
+import allowQuery from './middleware/allow-query';
+import findEntry from './middleware/find-entry';
+import noQuery from './middleware/no-query';
+import requestLog from './middleware/request-log';
+import validateFilename from './middleware/validate-filename';
+import validatePackagePathname from './middleware/validate-package-pathname';
+import validatePackageName from './middleware/validate-package-name';
+import validatePackageVersion from './middleware/validate-package-version';
 
 function createApp(callback) {
   const app = express();

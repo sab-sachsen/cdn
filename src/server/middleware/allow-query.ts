@@ -1,4 +1,4 @@
-import createSearch from '../utils/create-search.js';
+import createSearch from '../utils/create-search';
 
 /**
  * Reject URLs with invalid query parameters to increase cache hit rates.

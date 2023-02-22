@@ -1,6 +1,6 @@
 import * as babel from '@babel/core';
 
-import unpkgRewrite from './unpkgRewrite.js';
+import unpkgRewrite from './unpkgRewrite';
 
 const testCases = [
   {

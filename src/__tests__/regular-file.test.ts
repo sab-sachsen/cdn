@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import createServer from '../server/createServer.js';
+import createServer from '../server/createServer';
 
 describe('A request for a JavaScript file', () => {
   let server;

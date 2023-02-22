@@ -1,7 +1,7 @@
 import etag from 'etag';
 
-import getContentTypeHeader from '../utils/get-content-type-header.js';
-import rewriteBareModuleIdentifiers from '../utils/rewrite-bare-module-identifiers.js';
+import getContentTypeHeader from '../utils/get-content-type-header';
+import rewriteBareModuleIdentifiers from '../utils/rewrite-bare-module-identifiers';
 
 export default function serveJavaScriptModule(req, res) {
   try {

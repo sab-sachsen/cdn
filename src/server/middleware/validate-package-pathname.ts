@@ -1,4 +1,4 @@
-import parsePackagePathname from '../utils/parse-package-pathname.js';
+import parsePackagePathname from '../utils/parse-package-pathname';
 
 /**
  * Parse the pathname in the URL. Reject invalid URLs.

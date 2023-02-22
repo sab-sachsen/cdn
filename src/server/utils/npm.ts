@@ -3,7 +3,7 @@ import https from 'https';
 import gunzip from 'gunzip-maybe';
 import LRUCache from 'lru-cache';
 
-import bufferStream from './bufferStream.js';
+import bufferStream from './buffer-stream.js';
 
 const npmRegistryURL =
   process.env.NPM_REGISTRY_URL || 'https://registry.npmjs.org';

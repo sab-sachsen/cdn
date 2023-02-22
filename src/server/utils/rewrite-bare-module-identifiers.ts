@@ -1,6 +1,6 @@
 import babel from '@babel/core';
 
-import unpkgRewrite from '../plugins/unpkgRewrite.js';
+import unpkgRewrite from '../plugins/unpkg-rewrite.js';
 
 const origin = process.env.ORIGIN || 'https://unpkg.com';
 

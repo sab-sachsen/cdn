@@ -1,20 +1,14 @@
 import etag from 'etag';
-import { load } from 'cheerio';
 
-import getContentTypeHeader from '../utils/getContentTypeHeader.js';
-import rewriteBareModuleIdentifiers from '../utils/rewriteBareModuleIdentifiers.js';
+import getContentTypeHeader from '../utils/get-content-type-header.js';
+import rewriteBareModuleIdentifiers from '../utils/rewrite-bare-module-identifiers.js';
 
-export default function serveHTMLModule(req, res) {
+export default function serveJavaScriptModule(req, res) {
   try {
-    const $ = load(req.entry.content.toString('utf8'));
-
-    $('script[type=module]').each((index, element) => {
-      $(element).html(
-        rewriteBareModuleIdentifiers($(element).html(), req.packageConfig)
-      );
-    });
-
-    const code = $.html();
+    const code = rewriteBareModuleIdentifiers(
+      req.entry.content.toString('utf8'),
+      req.packageConfig
+    );
 
     res
       .set({
@@ -22,7 +16,7 @@ export default function serveHTMLModule(req, res) {
         'Content-Type': getContentTypeHeader(req.entry.contentType),
         'Cache-Control': 'public, max-age=31536000', // 1 year
         ETag: etag(code),
-        'Cache-Tag': 'file, html-file, html-module'
+        'Cache-Tag': 'file, js-file, js-module'
       })
       .send(code);
   } catch (error) {

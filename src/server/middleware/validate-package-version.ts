@@ -1,7 +1,7 @@
 import semver from 'semver';
 
-import asyncHandler from '../utils/asyncHandler.js';
-import createPackageURL from '../utils/createPackageURL.js';
+import asyncHandler from '../utils/async-andler.js';
+import createPackageURL from '../utils/create-package-url.js';
 import { getPackageConfig, getVersionsAndTags } from '../utils/npm.js';
 
 function semverRedirect(req, res, newVersion) {

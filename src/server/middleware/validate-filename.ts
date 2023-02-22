@@ -1,4 +1,4 @@
-import createPackageURL from '../utils/createPackageURL.js';
+import createPackageURL from '../utils/create-package-url.js';
 
 function filenameRedirect(req, res) {
   let filename;

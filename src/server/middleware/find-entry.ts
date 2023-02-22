@@ -1,11 +1,11 @@
 import path from 'path';
 import tar from 'tar-stream';
 
-import asyncHandler from '../utils/asyncHandler.js';
-import bufferStream from '../utils/bufferStream.js';
-import createPackageURL from '../utils/createPackageURL.js';
-import getContentType from '../utils/getContentType.js';
-import getIntegrity from '../utils/getIntegrity.js';
+import asyncHandler from '../utils/async-andler.js';
+import bufferStream from '../utils/buffer-stream.js';
+import createPackageURL from '../utils/create-package-url.js';
+import getContentType from '../utils/get-content-type.js';
+import getIntegrity from '../utils/get-integrity.js';
 import { getPackage } from '../utils/npm.js';
 
 function fileRedirect(req, res, entry) {

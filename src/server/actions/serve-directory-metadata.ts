@@ -1,10 +1,10 @@
 import path from 'path';
 import tar from 'tar-stream';
 
-import asyncHandler from '../utils/asyncHandler.js';
-import bufferStream from '../utils/bufferStream.js';
-import getContentType from '../utils/getContentType.js';
-import getIntegrity from '../utils/getIntegrity.js';
+import asyncHandler from '../utils/async-andler.js';
+import bufferStream from '../utils/buffer-stream.js';
+import getContentType from '../utils/get-content-type.js';
+import getIntegrity from '../utils/get-integrity.js';
 import { getPackage } from '../utils/npm.js';
 
 async function findMatchingEntries(stream, filename) {

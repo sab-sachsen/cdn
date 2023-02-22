@@ -1,14 +1,17 @@
+import type { NextFunction, Request, Response } from 'express';
 import path from 'path';
 import tar from 'tar-stream';
 
-import asyncHandler from '../utils/async-andler';
+import type { Entry } from '../types/entry.type';
+
+import asyncHandler from '../utils/async-handler';
 import bufferStream from '../utils/buffer-stream';
 import createPackageURL from '../utils/create-package-url';
 import getContentType from '../utils/get-content-type';
 import getIntegrity from '../utils/get-integrity';
 import { getPackage } from '../utils/npm';
 
-function fileRedirect(req, res, entry) {
+function fileRedirect(req: Request, res: Response, entry: Entry) {
   // Redirect to the file with the extension so it's
   // clear which file is being served.
   res
@@ -27,7 +30,7 @@ function fileRedirect(req, res, entry) {
     );
 }
 
-function indexRedirect(req, res, entry) {
+function indexRedirect(req: Request, res: Response, entry: Entry) {
   // Redirect to the index file so relative imports
   // resolve correctly.
   res
@@ -51,24 +54,33 @@ function indexRedirect(req, res, entry) {
  * Follows node's resolution algorithm.
  * https://nodejs.org/api/modules.html#modules_all_together
  */
-function searchEntries(stream, filename) {
+async function searchEntries(
+  stream: NodeJS.ReadableStream,
+  filename: string
+): Promise<{
+  foundEntry: Partial<Entry>;
+  matchingEntries: { [key: string]: Partial<Entry> };
+}> {
   // filename = /some/file/name.js or /some/dir/name
   return new Promise((accept, reject) => {
     const jsEntryFilename = `${filename}.js`;
     const jsonEntryFilename = `${filename}.json`;
 
-    const matchingEntries = {};
-    let foundEntry;
+    let foundEntry: Partial<Entry>;
+    const matchingEntries: Record<string, typeof foundEntry> = {};
 
     if (filename === '/') {
-      foundEntry = matchingEntries['/'] = { name: '/', type: 'directory' };
+      foundEntry = matchingEntries['/'] = {
+        name: '/',
+        type: 'directory'
+      } satisfies typeof foundEntry;
     }
 
     stream
       .pipe(tar.extract())
       .on('error', reject)
       .on('entry', async (header, stream, next) => {
-        const entry = {
+        const entry: Entry = {
           // Most packages have header names that look like `package/index.js`
           // so we shorten that to just `index.js` here. A few packages use a
           // prefix other than `package/`. e.g. the firebase package uses the
@@ -126,7 +138,7 @@ function searchEntries(stream, filename) {
 
           entry.contentType = getContentType(entry.path);
           entry.integrity = getIntegrity(content);
-          entry.lastModified = header.mtime.toUTCString();
+          entry.lastModified = header.mtime?.toUTCString();
           entry.size = content.length;
 
           // Set the content only for the foundEntry and
@@ -155,10 +167,10 @@ function searchEntries(stream, filename) {
  * Fetch and search the archive to try and find the requested file.
  * Redirect to the "index" file if a directory was requested.
  */
-async function findEntry(req, res, next) {
+async function findEntry(req: Request, res: Response, next: NextFunction) {
   const stream = await getPackage(req.packageName, req.packageVersion, req.log);
   const { foundEntry: entry, matchingEntries: entries } = await searchEntries(
-    stream,
+    stream!,
     req.filename
   );
 
@@ -174,7 +186,7 @@ async function findEntry(req, res, next) {
   }
 
   if (entry.type === 'file' && entry.path !== req.filename) {
-    return fileRedirect(req, res, entry);
+    return fileRedirect(req, res, entry as Entry);
   }
 
   if (entry.type === 'directory') {
@@ -186,7 +198,7 @@ async function findEntry(req, res, next) {
       entries[`${req.filename}/index.json`];
 
     if (indexEntry && indexEntry.type === 'file') {
-      return indexRedirect(req, res, indexEntry);
+      return indexRedirect(req, res, indexEntry as Entry);
     }
 
     return res
@@ -199,7 +211,7 @@ async function findEntry(req, res, next) {
       .send(`Cannot find an index in "${req.filename}" in ${req.packageSpec}`);
   }
 
-  req.entry = entry;
+  req.entry = entry as Entry;
 
   next();
 }

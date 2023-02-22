@@ -1,4 +1,4 @@
-import path from 'path';
+import { basename } from 'node:path';
 import mime from 'mime';
 
 mime.define(
@@ -19,8 +19,8 @@ mime.define(
 
 const textFiles = /\/?(\.[a-z]*rc|\.git[a-z]*|\.[a-z]*ignore|\.lock)$/i;
 
-export default function getContentType(file) {
-  const name = path.basename(file);
+export default function getContentType(file: string): string {
+  const name = basename(file);
 
   return textFiles.test(name)
     ? 'text/plain'

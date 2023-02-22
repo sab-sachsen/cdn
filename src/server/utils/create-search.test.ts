@@ -1,4 +1,4 @@
-import createSearch from './createSearch';
+import createSearch from './create-search';
 
 describe('createSearch', () => {
   it('omits the trailing = for empty string values', () => {
@@ -6,8 +6,8 @@ describe('createSearch', () => {
   });
 
   it('omits the trailing = for null/undefined values', () => {
-    expect(createSearch({ a: 'a', b: null })).toEqual('?a=a&b');
-    expect(createSearch({ a: 'a', b: undefined })).toEqual('?a=a&b');
+    expect(createSearch({ a: 'a', b: null as any })).toEqual('?a=a&b');
+    expect(createSearch({ a: 'a', b: undefined as any })).toEqual('?a=a&b');
   });
 
   it('sorts keys', () => {

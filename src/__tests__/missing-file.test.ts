@@ -1,9 +1,10 @@
+import type { Application } from 'express';
 import request from 'supertest';
 
 import createServer from '../server/create-server';
 
 describe('A request for a non-existent file', () => {
-  let server;
+  let server: Application;
   beforeEach(() => {
     server = createServer();
   });

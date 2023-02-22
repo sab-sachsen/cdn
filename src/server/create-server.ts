@@ -1,5 +1,5 @@
 import cors from 'cors';
-import express from 'express';
+import express, { type Application } from 'express';
 import morgan from 'morgan';
 
 import serveDirectoryMetadata from './actions/serve-directory-metadata';
@@ -16,13 +16,13 @@ import validatePackagePathname from './middleware/validate-package-pathname';
 import validatePackageName from './middleware/validate-package-name';
 import validatePackageVersion from './middleware/validate-package-version';
 
-function createApp(callback) {
+function createApp(callback: (app: Application) => void): Application {
   const app = express();
   callback(app);
   return app;
 }
 
-export default function createServer() {
+export default function createServer(): Application {
   return createApp(app => {
     app.disable('x-powered-by');
     app.enable('trust proxy');
@@ -44,7 +44,7 @@ export default function createServer() {
 
       app.get(
         '*/',
-        allowQuery('meta'),
+        allowQuery(['meta']),
         validatePackagePathname,
         validatePackageName,
         validatePackageVersion,
@@ -54,7 +54,7 @@ export default function createServer() {
 
       app.get(
         '*',
-        allowQuery('meta'),
+        allowQuery(['meta']),
         validatePackagePathname,
         validatePackageName,
         validatePackageVersion,
@@ -78,7 +78,7 @@ export default function createServer() {
 
       app.get(
         '*',
-        allowQuery('module'),
+        allowQuery(['module']),
         validatePackagePathname,
         validatePackageName,
         validatePackageVersion,

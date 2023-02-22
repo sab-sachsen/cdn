@@ -1,6 +1,8 @@
-export default function bufferStream(stream) {
+export default function bufferStream(
+  stream: NodeJS.ReadableStream
+): Promise<Buffer> {
   return new Promise((accept, reject) => {
-    const chunks = [];
+    const chunks: Uint8Array[] = [];
 
     stream
       .on('error', reject)

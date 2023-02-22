@@ -1,15 +1,20 @@
+import type { NextFunction, Request, Response } from 'express';
 import validateNpmPackageName from 'validate-npm-package-name';
 
 const hexValue = /^[a-f0-9]+$/i;
 
-function isHash(value) {
+function isHash(value: string): boolean {
   return value.length === 32 && hexValue.test(value);
 }
 
 /**
  * Reject requests for invalid npm package names.
  */
-export default function validatePackageName(req, res, next) {
+export default function validatePackageName(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (isHash(req.packageName)) {
     return res
       .status(403)

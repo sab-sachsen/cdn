@@ -1,0 +1,7 @@
+{
+  "watch": ["src/server"],
+  "ignore": ["src/**/*.test.ts", "node_modules"],
+  "ext": "ts",
+  "exec": "npm run build && node -r dotenv/config ./dist/index.js",
+  "legacyWatch": true
+}

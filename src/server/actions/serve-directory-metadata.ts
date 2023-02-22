@@ -1,16 +1,21 @@
-import path from 'path';
+import { dirname } from 'node:path';
 import tar from 'tar-stream';
+import type { Request, Response } from 'express';
 
-import asyncHandler from '../utils/async-andler';
+import type { Entry } from '../types/entry.type';
+import asyncHandler from '../utils/async-handler';
 import bufferStream from '../utils/buffer-stream';
 import getContentType from '../utils/get-content-type';
 import getIntegrity from '../utils/get-integrity';
 import { getPackage } from '../utils/npm';
 
-async function findMatchingEntries(stream, filename) {
+async function findMatchingEntries(
+  stream: NodeJS.ReadableStream,
+  filename: string
+): Promise<Record<string, Entry>> {
   // filename = /some/dir/name
   return new Promise((accept, reject) => {
-    const entries = {};
+    const entries: Record<string, Entry> = {};
 
     entries[filename] = { path: filename, type: 'directory' };
 
@@ -18,7 +23,7 @@ async function findMatchingEntries(stream, filename) {
       .pipe(tar.extract())
       .on('error', reject)
       .on('entry', async (header, stream, next) => {
-        const entry = {
+        const entry: Entry = {
           // Most packages have header names that look like `package/index.js`
           // so we shorten that to just `/index.js` here. A few packages use a
           // prefix other than `package/`. e.g. the firebase package uses the
@@ -30,12 +35,12 @@ async function findMatchingEntries(stream, filename) {
         // Dynamically create "directory" entries for all subdirectories
         // in this entry's path. Some tarballs omit directory entries for
         // some reason, so this is the "brute force" method.
-        let dir = path.dirname(entry.path);
+        let dir = dirname(entry.path);
         while (dir !== '/') {
           if (!entries[dir] && dir.startsWith(filename)) {
             entries[dir] = { path: dir, type: 'directory' };
           }
-          dir = path.dirname(dir);
+          dir = dirname(dir);
         }
 
         // Ignore non-files and files that don't match the prefix.
@@ -50,7 +55,7 @@ async function findMatchingEntries(stream, filename) {
 
           entry.contentType = getContentType(entry.path);
           entry.integrity = getIntegrity(content);
-          entry.lastModified = header.mtime.toUTCString();
+          entry.lastModified = header.mtime?.toUTCString();
           entry.size = content.length;
 
           entries[entry.path] = entry;
@@ -66,14 +71,17 @@ async function findMatchingEntries(stream, filename) {
   });
 }
 
-function getMatchingEntries(entry, entries) {
+function getMatchingEntries(
+  entry: Entry,
+  entries: Record<string, Entry>
+): Entry[] {
   return Object.keys(entries)
-    .filter(key => entry.path !== key && path.dirname(key) === entry.path)
+    .filter(key => entry.path !== key && dirname(key) === entry.path)
     .map(key => entries[key]);
 }
 
-function getMetadata(entry, entries) {
-  const metadata = { path: entry.path, type: entry.type };
+function getMetadata(entry: Entry, entries: Record<string, Entry>): Entry {
+  const metadata: Entry = { path: entry.path, type: entry.type };
 
   if (entry.type === 'file') {
     metadata.contentType = entry.contentType;
@@ -89,11 +97,11 @@ function getMetadata(entry, entries) {
   return metadata;
 }
 
-async function serveDirectoryMetadata(req, res) {
+async function serveDirectoryMetadata(req: Request, res: Response) {
   const stream = await getPackage(req.packageName, req.packageVersion, req.log);
 
   const filename = req.filename.slice(0, -1) || '/';
-  const entries = await findMatchingEntries(stream, filename);
+  const entries = await findMatchingEntries(stream!, filename);
   const metadata = getMetadata(entries[filename], entries);
 
   res.send(metadata);

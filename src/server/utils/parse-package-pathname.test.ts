@@ -1,4 +1,4 @@
-import parsePackagePathname from './parsePackagePathname';
+import parsePackagePathname from './parse-package-pathname';
 
 describe('parsePackagePathname', () => {
   it('parses plain packages', () => {

@@ -1,7 +1,12 @@
-import url from 'url';
-import https from 'https';
+import type { IncomingMessage } from 'node:http';
+import https, { type RequestOptions } from 'node:https';
+import url from 'node:url';
+
 import gunzip from 'gunzip-maybe';
 import LRUCache from 'lru-cache';
+
+import type { Log } from '../types/log.types';
+import type { PackageConfig } from '../types/package-config.type';
 
 import bufferStream from './buffer-stream';
 
@@ -13,7 +18,9 @@ const npmAuthPassword = process.env.NPM_AUTH_PASSWORD;
 const auth = npmAuthToken
   ? `Bearer ${npmAuthToken}`
   : npmAuthUsername && npmAuthPassword
-  ? `Basic ${btoa(`${npmAuthUsername}:${npmAuthPassword}`)}`
+  ? `Basic ${Buffer.from(`${npmAuthUsername}:${npmAuthPassword}`).toString(
+      'base64'
+    )}`
   : undefined;
 
 const agent = new https.Agent({
@@ -32,22 +39,26 @@ const cache = new LRUCache({
 
 const notFound = '';
 
-function get(options) {
+async function get(options: RequestOptions): Promise<IncomingMessage> {
   return new Promise((accept, reject) => {
     https.get(options, accept).on('error', reject);
   });
 }
 
-function isScopedPackageName(packageName) {
+function isScopedPackageName(packageName: string): boolean {
   return packageName.startsWith('@');
 }
 
-function encodePackageName(packageName) {
+function encodePackageName(packageName: string): string {
   return isScopedPackageName(packageName)
     ? `@${encodeURIComponent(packageName.substring(1))}`
     : encodeURIComponent(packageName);
 }
-async function fetchPackageInfo(packageName, log) {
+
+async function fetchPackageInfo(
+  packageName: string,
+  log: Log
+): Promise<PackageConfig | null> {
   const name = encodePackageName(packageName);
   const infoURL = `${npmRegistryURL}/${name}`;
 
@@ -67,7 +78,9 @@ async function fetchPackageInfo(packageName, log) {
   const res = await get(options);
 
   if (res.statusCode === 200) {
-    return bufferStream(res).then(JSON.parse);
+    return bufferStream(res).then(buffer =>
+      JSON.parse(buffer.toString('utf-8'))
+    );
   }
 
   if (res.statusCode === 404) {
@@ -86,7 +99,15 @@ async function fetchPackageInfo(packageName, log) {
   return null;
 }
 
-async function fetchVersionsAndTags(packageName, log) {
+type VersionsAndTags = {
+  versions: string[];
+  tags: string[];
+};
+
+async function fetchVersionsAndTags(
+  packageName: string,
+  log: Log
+): Promise<VersionsAndTags | null> {
   const info = await fetchPackageInfo(packageName, log);
   return info && info.versions
     ? { versions: Object.keys(info.versions), tags: info['dist-tags'] }
@@ -97,9 +118,12 @@ async function fetchVersionsAndTags(packageName, log) {
  * Returns an object of available { versions, tags }.
  * Uses a cache to avoid over-fetching from the registry.
  */
-export async function getVersionsAndTags(packageName, log) {
-  const cacheKey = `versions-${packageName}`;
-  const cacheValue = cache.get(cacheKey);
+export async function getVersionsAndTags(
+  packageName: string,
+  log: Log
+): Promise<VersionsAndTags | null> {
+  const cacheKey = `versions-${packageName}` as BufferEncoding;
+  const cacheValue = cache.get(cacheKey) as string | null;
 
   if (cacheValue != null) {
     return cacheValue === notFound ? null : JSON.parse(cacheValue);
@@ -130,17 +154,21 @@ const packageConfigExcludeKeys = [
   'scripts'
 ];
 
-function cleanPackageConfig(config) {
+function cleanPackageConfig(config: PackageConfig): PackageConfig {
   return Object.keys(config).reduce((memo, key) => {
     if (!key.startsWith('_') && !packageConfigExcludeKeys.includes(key)) {
-      memo[key] = config[key];
+      memo[key as keyof PackageConfig] = config[key as keyof PackageConfig] as any;
     }
 
     return memo;
-  }, {});
+  }, {} as PackageConfig);
 }
 
-async function fetchPackageConfig(packageName, version, log) {
+async function fetchPackageConfig(
+  packageName: string,
+  version: string,
+  log: Log
+): Promise<PackageConfig | null> {
   const info = await fetchPackageInfo(packageName, log);
   return info && info.versions && version in info.versions
     ? cleanPackageConfig(info.versions[version])
@@ -151,9 +179,13 @@ async function fetchPackageConfig(packageName, version, log) {
  * Returns metadata about a package, mostly the same as package.json.
  * Uses a cache to avoid over-fetching from the registry.
  */
-export async function getPackageConfig(packageName, version, log) {
-  const cacheKey = `config-${packageName}-${version}`;
-  const cacheValue = cache.get(cacheKey);
+export async function getPackageConfig(
+  packageName: string,
+  version: string,
+  log: Log
+): Promise<PackageConfig | null> {
+  const cacheKey = `config-${packageName}-${version}` as BufferEncoding;
+  const cacheValue = cache.get(cacheKey) as string | null;
 
   if (cacheValue != null) {
     return cacheValue === notFound ? null : JSON.parse(cacheValue);
@@ -173,7 +205,11 @@ export async function getPackageConfig(packageName, version, log) {
 /**
  * Returns a stream of the tarball'd contents of the given package.
  */
-export async function getPackage(packageName, version, log) {
+export async function getPackage(
+  packageName: string,
+  version: string,
+  log: Log
+): Promise<NodeJS.ReadableStream | null> {
   const tarballName = isScopedPackageName(packageName)
     ? packageName.split('/')[1]
     : packageName;

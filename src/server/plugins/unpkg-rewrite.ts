@@ -1,25 +1,32 @@
+import type { PluginObj } from '@babel/core';
+import type { StringLiteral } from '@babel/types';
+
 import URL from 'whatwg-url';
 import warning from 'warning';
 
 const bareIdentifierFormat = /^((?:@[^/]+\/)?[^/]+)(\/.*)?$/;
 
-function isValidURL(value) {
+function isValidURL(value: string): boolean {
   return URL.parseURL(value) != null;
 }
 
-function isProbablyURLWithoutProtocol(value) {
+function isProbablyURLWithoutProtocol(value: string): boolean {
   return value.substr(0, 2) === '//';
 }
 
-function isAbsoluteURL(value) {
+function isAbsoluteURL(value: string): boolean {
   return isValidURL(value) || isProbablyURLWithoutProtocol(value);
 }
 
-function isBareIdentifier(value) {
+function isBareIdentifier(value: string): boolean {
   return value.charAt(0) !== '.' && value.charAt(0) !== '/';
 }
 
-function rewriteValue(/* StringLiteral */ node, origin, dependencies) {
+function rewriteValue(
+  node: StringLiteral,
+  origin: string,
+  dependencies: Record<string, string>
+) {
   if (isAbsoluteURL(node.value)) {
     return;
   }
@@ -27,8 +34,8 @@ function rewriteValue(/* StringLiteral */ node, origin, dependencies) {
   if (isBareIdentifier(node.value)) {
     // "bare" identifier
     const match = bareIdentifierFormat.exec(node.value);
-    const packageName = match[1];
-    const file = match[2] || '';
+    const packageName = match?.[1] as string;
+    const file = match?.[2] || '';
 
     warning(
       dependencies[packageName],
@@ -45,9 +52,12 @@ function rewriteValue(/* StringLiteral */ node, origin, dependencies) {
   }
 }
 
-export default function unpkgRewrite(origin, dependencies = {}) {
+export default function unpkgRewrite(
+  origin: string,
+  dependencies = {}
+): PluginObj {
   return {
-    manipulateOptions(opts, parserOpts) {
+    manipulateOptions(_opts, parserOpts) {
       parserOpts.plugins.push(
         'dynamicImport',
         'exportDefaultFrom',
@@ -63,7 +73,11 @@ export default function unpkgRewrite(origin, dependencies = {}) {
           return;
         }
 
-        rewriteValue(path.node.arguments[0], origin, dependencies);
+        rewriteValue(
+          path.node.arguments[0] as StringLiteral,
+          origin,
+          dependencies
+        );
       },
       ExportAllDeclaration(path) {
         rewriteValue(path.node.source, origin, dependencies);

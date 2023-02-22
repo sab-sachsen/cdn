@@ -1,4 +1,4 @@
-import getContentType from './getContentType';
+import getContentType from './get-content-type';
 
 describe('getContentType', () => {
   it('returns text/plain for LICENSE|README|CHANGES|AUTHORS|Makefile', () => {

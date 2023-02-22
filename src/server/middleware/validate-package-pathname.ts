@@ -1,9 +1,14 @@
+import type { NextFunction, Request, Response } from 'express';
 import parsePackagePathname from '../utils/parse-package-pathname';
 
 /**
  * Parse the pathname in the URL. Reject invalid URLs.
  */
-export default function validatePackagePathname(req, res, next) {
+export default function validatePackagePathname(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const parsed = parsePackagePathname(req.path);
 
   if (parsed == null) {

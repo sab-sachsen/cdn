@@ -1,8 +1,10 @@
+import type { NextFunction, Request, Response } from 'express';
+
 /**
  * Strips all query params from the URL to increase cache hit rates.
  */
 export default function noQuery() {
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const keys = Object.keys(req.query);
 
     if (keys.length) {

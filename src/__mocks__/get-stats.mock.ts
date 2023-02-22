@@ -1,4 +1,4 @@
-export default function getStats(since, until) {
+export default function getStats(since: string, until: string) {
   const stats = {
     since: since,
     until: until,

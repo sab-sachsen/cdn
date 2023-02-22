@@ -4,7 +4,10 @@ import unpkgRewrite from '../plugins/unpkg-rewrite';
 
 const origin = process.env.ORIGIN || 'https://unpkg.com';
 
-export default function rewriteBareModuleIdentifiers(code, packageConfig) {
+export default function rewriteBareModuleIdentifiers(
+  code: string,
+  packageConfig: any
+): string | null | undefined {
   const dependencies = Object.assign(
     {},
     packageConfig.peerDependencies,
@@ -27,5 +30,5 @@ export default function rewriteBareModuleIdentifiers(code, packageConfig) {
     ]
   };
 
-  return babel.transform(code, options).code;
+  return babel.transform(code, options)?.code;
 }

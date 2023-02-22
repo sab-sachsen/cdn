@@ -1,7 +1,9 @@
+import type { NextFunction, Request, Response } from 'express';
+import type { PackageConfig } from '../types/package-config.type';
 import createPackageURL from '../utils/create-package-url';
 
-function filenameRedirect(req, res) {
-  let filename;
+function filenameRedirect(req: Request, res: Response) {
+  let filename: string;
   if (req.query.module != null) {
     // See https://github.com/rollup/rollup/wiki/pkg.module
     filename = req.packageConfig.module || req.packageConfig['jsnext:main'];
@@ -28,11 +30,13 @@ function filenameRedirect(req, res) {
     }
   } else if (
     req.query.main &&
-    req.packageConfig[req.query.main] &&
-    typeof req.packageConfig[req.query.main] === 'string'
+    req.packageConfig[req.query.main as keyof PackageConfig] &&
+    typeof req.packageConfig[req.query.main as keyof PackageConfig] === 'string'
   ) {
     // Deprecated, see #63
-    filename = req.packageConfig[req.query.main];
+    filename = req.packageConfig[
+      req.query.main as keyof PackageConfig
+    ] as string;
   } else if (
     req.packageConfig.unpkg &&
     typeof req.packageConfig.unpkg === 'string'
@@ -69,7 +73,11 @@ function filenameRedirect(req, res) {
 /**
  * Redirect to the exact filename if the request omits one.
  */
-export default async function validateFilename(req, res, next) {
+export default async function validateFilename(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.filename) {
     return filenameRedirect(req, res);
   }

@@ -1,6 +1,6 @@
 import * as babel from '@babel/core';
 
-import unpkgRewrite from './unpkgRewrite';
+import unpkgRewrite from './unpkg-rewrite';
 
 const testCases = [
   {
@@ -81,7 +81,7 @@ describe('Rewriting imports/exports', () => {
         plugins: [unpkgRewrite(origin, dependencies)]
       });
 
-      expect(result.code).toEqual(testCase.after);
+      expect(result?.code).toEqual(testCase.after);
     });
   });
 });

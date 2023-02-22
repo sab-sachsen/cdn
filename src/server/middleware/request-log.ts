@@ -1,26 +1,31 @@
-import util from 'util';
+import { format as logFormat } from 'node:util';
+import type { NextFunction, Request, Response } from 'express';
+
+import type { Log } from '../types/log.types';
 
 const enableDebugging = process.env.DEBUG != null;
 
-function noop() {}
-
-function createLog(req) {
+function createLog(): Log {
   return {
     debug: enableDebugging
-      ? (format, ...args) => {
-          console.log(util.format(format, ...args));
+      ? (format: any, ...args: any[]) => {
+          console.log(logFormat(format, ...args));
         }
-      : noop,
-    info: (format, ...args) => {
-      console.log(util.format(format, ...args));
+      : () => undefined,
+    info: (format: any, ...args: any[]) => {
+      console.log(logFormat(format, ...args));
     },
-    error: (format, ...args) => {
-      console.error(util.format(format, ...args));
+    error: (format: any, ...args: any[]) => {
+      console.error(logFormat(format, ...args));
     }
   };
 }
 
-export default function requestLog(req, res, next) {
-  req.log = createLog(req);
+export default function requestLog(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  req.log = createLog();
   next();
 }

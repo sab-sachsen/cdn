@@ -1,7 +1,9 @@
+import type { Request, Response } from 'express';
+
 import serveHTMLModule from './serve-html-module';
 import serveJavaScriptModule from './serve-java-script-module';
 
-export default function serveModule(req, res) {
+export default function serveModule(req: Request, res: Response) {
   if (req.entry.contentType === 'application/javascript') {
     return serveJavaScriptModule(req, res);
   }

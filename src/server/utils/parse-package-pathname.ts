@@ -1,6 +1,10 @@
+import type { PackageInfo } from '../types/package-info.type';
+
 const packagePathnameFormat = /^\/((?:@[^/@]+\/)?[^/@]+)(?:@([^/]+))?(\/.*)?$/;
 
-export default function parsePackagePathname(pathname) {
+export default function parsePackagePathname(
+  pathname: string
+): PackageInfo | null {
   try {
     pathname = decodeURIComponent(pathname);
   } catch (error) {

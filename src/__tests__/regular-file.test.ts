@@ -1,9 +1,10 @@
+import type { Application } from 'express';
 import request from 'supertest';
 
-import createServer from '../server/createServer';
+import createServer from '../server/create-server';
 
 describe('A request for a JavaScript file', () => {
-  let server;
+  let server: Application;
   beforeEach(() => {
     server = createServer();
   });

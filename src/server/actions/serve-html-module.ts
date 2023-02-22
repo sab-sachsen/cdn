@@ -1,16 +1,17 @@
 import etag from 'etag';
 import { load } from 'cheerio';
+import type { Request, Response } from 'express';
 
 import getContentTypeHeader from '../utils/get-content-type-header';
 import rewriteBareModuleIdentifiers from '../utils/rewrite-bare-module-identifiers';
 
-export default function serveHTMLModule(req, res) {
+export default function serveHTMLModule(req: Request, res: Response) {
   try {
-    const $ = load(req.entry.content.toString('utf8'));
+    const $ = load(req.entry.content!.toString('utf8'));
 
-    $('script[type=module]').each((index, element) => {
+    $('script[type=module]').each((_index, element) => {
       $(element).html(
-        rewriteBareModuleIdentifiers($(element).html(), req.packageConfig)
+        rewriteBareModuleIdentifiers($(element).html()!, req.packageConfig)!
       );
     });
 
@@ -25,7 +26,7 @@ export default function serveHTMLModule(req, res) {
         'Cache-Tag': 'file, html-file, html-module'
       })
       .send(code);
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
 
     const errorName = error.constructor.name;

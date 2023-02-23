@@ -10,6 +10,7 @@ but has since diverged quite a bit as it has been modified to fulfill our needs:
 - Parameterized Registry URL for a [npm](https://www.npmjs.com/) compatible registry, like [Artifactory](https://www.jfrog.com/confluence/display/JFROG/JFrog+Artifactory) or [Nexus](https://www.sonatype.com/products/nexus-repository)
 - Static index page, no client and browsing
 - No legacy routes support
+- Limit available scopes optionally, by setting `SCOPES` environment variable
 - Dockerized with [pm2](https://pm2.keymetrics.io/)
 - [Typescript](https://www.typescriptlang.org/) based
 - Build tooling based on [esbuild](https://esbuild.github.io/)
@@ -40,6 +41,11 @@ $ docker compose up --build
 
 Run the tests with `npm test`. Additionally, you can run the tests in watch mode with `npm run test:watch`.
 
+## Limiting available scopes
+
+You can limit the available packages by setting the `SCOPES` environment variable. This is useful if you want to limit the available packages to a specific scope, e.g. `@some-scope`. Multiple scopes can be separated by a space, e.g. `@scope @another-scope`.
+
+If no scope is defined, the whole package name is checked. Thus it is possible to limit the available packages to explicit packages as well, e.g. `lit express`.
 
 ## License
 

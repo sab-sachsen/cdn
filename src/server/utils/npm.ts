@@ -37,7 +37,7 @@ const cache = new LRUCache({
   ttl: oneSecond
 });
 
-const notFound = '';
+const notFound = '0';
 
 async function get(options: RequestOptions): Promise<IncomingMessage> {
   return new Promise((accept, reject) => {

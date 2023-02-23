@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "jest",
+    "test:watch": "jest --watchAll",
     "build": "ts-node --transpileOnly --logError esbuild.config",
     "start": "nodemon",
     "start:docker": "docker compose up --build"

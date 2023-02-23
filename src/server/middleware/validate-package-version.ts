@@ -28,7 +28,7 @@ async function resolveVersion(packageName: string, range: string, log: Log) {
   const versionsAndTags = await getVersionsAndTags(packageName, log);
 
   if (versionsAndTags) {
-    const { versions, tags } = versionsAndTags;
+    const { versions = [], tags = {} } = versionsAndTags;
 
     if (range in tags) {
       range = tags[range as keyof typeof tags] as string;

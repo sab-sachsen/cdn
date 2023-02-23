@@ -101,7 +101,7 @@ async function fetchPackageInfo(
 
 type VersionsAndTags = {
   versions: string[];
-  tags: string[];
+  tags: Record<string, string>;
 };
 
 async function fetchVersionsAndTags(

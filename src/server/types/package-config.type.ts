@@ -5,6 +5,6 @@ export type PackageConfig = {
   type: string;
   unpkg: string;
   'jsnext:main': string;
-  'dist-tags': string[];
+  'dist-tags': Record<string, string>;
   versions: { [version: string]: any };
 };

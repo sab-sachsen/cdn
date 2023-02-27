@@ -2,9 +2,9 @@ name: lint, test and build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   lint:
@@ -14,9 +14,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
-          cache: 'npm'
-    - run: npm ci
-    - run: npm run lint
+          cache: "npm"
+      - run: npm ci
+      - run: npm run lint
 
   test:
     needs: lint
@@ -26,9 +26,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
-          cache: 'npm'
-    - run: npm ci
-    - run: npm run test
+          cache: "npm"
+      - run: npm ci
+      - run: npm run test
 
   build:
     needs: [lint, test]
@@ -38,6 +38,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
-          cache: 'npm'
-    - run: npm ci
-    - run: npm run build
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build

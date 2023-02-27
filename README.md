@@ -37,6 +37,10 @@ Or alternatively you can build the image yourself and run it:
 $ docker compose up --build
 ```
 
+### Linting
+
+This package uses [Eslint](https://eslint.org/) for linting. You can run the linter with `npm run lint`.
+
 ### Tests
 
 Run the tests with `npm test`. Additionally, you can run the tests in watch mode with `npm run test:watch`.

@@ -1,5 +1,7 @@
 <img src="https://github.com/sab-sachsen/cdn/raw/main/public/logo.svg" alt="SAB Logo" width="150px">
 
+<img align="right" src="https://github.com/sab-sachsen/cdn/actions/workflows/workflow.yml/badge.svg">
+
 ---
 
 # CDN based on [UNPKG](https://github.com/mjackson/unpkg)

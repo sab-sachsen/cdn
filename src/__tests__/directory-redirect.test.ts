@@ -22,7 +22,9 @@ describe('A request for a directory', () => {
   });
 
   describe('when a .json file exists with the same name', () => {
-    it('is redirected to the .json file', () => {});
+    it('is redirected to the .json file', () => {
+      // TODO: Implement this test
+    });
   });
 
   describe('when it contains an index.js file', () => {

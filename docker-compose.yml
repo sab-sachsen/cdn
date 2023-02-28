@@ -1,4 +1,6 @@
-version: "3.8"
+version: '3.9'
+
+name: sab-cdn
 
 networks:
   localnet: {}
@@ -7,26 +9,36 @@ volumes:
   sab-cache-data: {}
 
 services:
-  data:
-    image: redis
-    container_name: "sab-cache"
+  redis:
+    image: redis:7.0.8-alpine3.17
+    container_name: sab-cache
     networks:
       - localnet
     volumes:
       - sab-cache-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      start_period: 3s
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
 
   server:
-    build: .
-    image: sab/cdn:latest
-    container_name: "sab-cdn"
-    restart: always
+    build:
+      context: .
+      args:
+        - PORT=8080
+    pull_policy: build
+    image: sab-srv:latest
+    container_name: sab-srv
+    init: true
+    restart: unless-stopped
     env_file: .env.docker
-    environment:
-      - CACHE_URL=redis://data:6379
-      - DATA_URL=redis://data:6379
     depends_on:
-      - data
+      redis:
+        condition: service_healthy
     networks:
       - localnet
     ports:
-      - "9000:8080"
+      - 9000:8080

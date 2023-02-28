@@ -2,11 +2,12 @@
   "name": "@sab/cdn",
   "private": true,
   "description": "A CDN service for frontend artifacts within the SAB infrastructure",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "eslint .",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "build": "ts-node --transpileOnly --logError esbuild.config",
+    "build": "ts-node --transpileOnly --logError ./esbuild.config.ts",
     "start": "nodemon",
     "start:docker": "docker compose up --build"
   },
@@ -34,7 +35,7 @@
     "@types/gunzip-maybe": "1.4.0",
     "@types/jest": "29.4.0",
     "@types/morgan": "1.9.4",
-    "@types/node": "16.11.7",
+    "@types/node": "18.14.2",
     "@types/supertest": "2.0.12",
     "@types/tar-stream": "2.2.2",
     "@types/validate-npm-package-name": "4.0.0",
@@ -46,7 +47,8 @@
     "esbuild": "0.17.10",
     "esbuild-copy-static-files": "0.1.0",
     "esbuild-plugin-clean": "1.0.1",
-    "eslint": "8.34.0",
+    "eslint": "8.35.0",
+    "eslint-config-react-app": "7.0.1",
     "eslint-import-resolver-typescript": "3.5.3",
     "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-import": "2.27.5",
@@ -61,7 +63,7 @@
     "typescript": "4.9.5"
   },
   "engines": {
-    "node": "16.17.0"
+    "node": "~18"
   },
   "jest": {
     "moduleNameMapper": {

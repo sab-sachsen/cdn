@@ -1,4 +1,4 @@
-import semver, { type SemVer } from 'semver';
+import { maxSatisfying, type SemVer } from 'semver';
 import type { NextFunction, Request, Response } from 'express';
 
 import type { Log } from '../types/log.types';
@@ -20,7 +20,7 @@ function semverRedirect(
     .redirect(
       302,
       req.baseUrl +
-        createPackageURL(req.packageName, newVersion, req.filename, req.query)
+      createPackageURL(req.packageName, newVersion, req.filename, req.query)
     );
 }
 
@@ -36,7 +36,7 @@ async function resolveVersion(packageName: string, range: string, log: Log) {
 
     return versions.includes(range)
       ? range
-      : semver.maxSatisfying(versions, range);
+      : maxSatisfying(versions, range);
   }
 
   return null;

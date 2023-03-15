@@ -1,13 +1,13 @@
 import type { PluginObj } from '@babel/core';
 import type { StringLiteral } from '@babel/types';
 
-import URL from 'whatwg-url';
+import { parseURL } from 'whatwg-url';
 import warning from 'warning';
 
 const bareIdentifierFormat = /^((?:@[^/]+\/)?[^/]+)(\/.*)?$/;
 
 function isValidURL(value: string): boolean {
-  return URL.parseURL(value) != null;
+  return parseURL(value) != null;
 }
 
 function isProbablyURLWithoutProtocol(value: string): boolean {

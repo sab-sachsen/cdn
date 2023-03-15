@@ -1,5 +1,5 @@
 import { dirname } from 'node:path';
-import tar from 'tar-stream';
+import { extract } from 'tar-stream';
 import type { Request, Response } from 'express';
 
 import type { Entry } from '../types/entry.type';
@@ -20,7 +20,7 @@ async function findMatchingEntries(
     entries[filename] = { path: filename, type: 'directory' };
 
     stream
-      .pipe(tar.extract())
+      .pipe(extract())
       .on('error', reject)
       .on('entry', async (header, stream, next) => {
         const entry: Entry = {

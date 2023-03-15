@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import { transform } from '@babel/core';
 
 import unpkgRewrite from '../plugins/unpkg-rewrite';
 
@@ -30,5 +30,5 @@ export default function rewriteBareModuleIdentifiers(
     ]
   };
 
-  return babel.transform(code, options)?.code;
+  return transform(code, options)?.code;
 }

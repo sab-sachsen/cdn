@@ -1,4 +1,4 @@
-import * as babel from '@babel/core';
+import { transform } from '@babel/core';
 
 import unpkgRewrite from './unpkg-rewrite';
 
@@ -77,7 +77,7 @@ const dependencies = {
 describe('Rewriting imports/exports', () => {
   testCases.forEach(testCase => {
     it(`rewrites '${testCase.before}' => '${testCase.after}'`, () => {
-      const result = babel.transform(testCase.before, {
+      const result = transform(testCase.before, {
         plugins: [unpkgRewrite(origin, dependencies)]
       });
 

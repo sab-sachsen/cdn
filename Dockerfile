@@ -1,6 +1,4 @@
-FROM node:18.14.2-alpine3.17
-# FROM node:18.14.2-slim
-# FROM node:18.14.2
+FROM node:18.15.0-alpine3.17
 ENV NODE_ENV=production
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin

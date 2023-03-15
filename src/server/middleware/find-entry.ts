@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import path from 'path';
-import tar from 'tar-stream';
+import { extract } from 'tar-stream';
 
 import type { Entry } from '../types/entry.type';
 
@@ -59,7 +59,7 @@ async function searchEntries(
   filename: string
 ): Promise<{
   foundEntry: Partial<Entry>;
-  matchingEntries: { [key: string]: Partial<Entry> };
+  matchingEntries: { [key: string]: Partial<Entry>; };
 }> {
   // filename = /some/file/name.js or /some/dir/name
   return new Promise((accept, reject) => {
@@ -77,7 +77,7 @@ async function searchEntries(
     }
 
     stream
-      .pipe(tar.extract())
+      .pipe(extract())
       .on('error', reject)
       .on('entry', async (header, stream, next) => {
         const entry: Entry = {

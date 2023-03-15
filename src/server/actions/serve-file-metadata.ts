@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import tar from 'tar-stream';
+import { extract } from 'tar-stream';
 
 import type { Entry } from '../types/entry.type';
 import asyncHandler from '../utils/async-handler';
@@ -14,7 +14,7 @@ async function findEntry(stream: NodeJS.ReadableStream, filename: string) {
     let foundEntry: Entry | null = null;
 
     stream
-      .pipe(tar.extract())
+      .pipe(extract())
       .on('error', reject)
       .on('entry', async (header, stream, next) => {
         const entry: Entry = {

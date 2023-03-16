@@ -2,6 +2,7 @@
   "name": "@sab/cdn",
   "private": true,
   "description": "A CDN service for frontend artifacts within the SAB infrastructure",
+  "license": "AGPL-3.0-or-later",
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint .",

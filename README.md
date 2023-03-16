@@ -13,7 +13,7 @@ but has since diverged quite a bit as it has been modified to fulfill our needs:
 - Static index page, no client and browsing
 - No legacy routes support
 - Limit available scopes optionally, by setting `SCOPES` environment variable
-- Dockerized with [pm2](https://pm2.keymetrics.io/)
+- Dockerized with buildable releases/pre-build images
 - [Typescript](https://www.typescriptlang.org/) based
 - Build tooling based on [esbuild](https://esbuild.github.io/)
 
@@ -31,21 +31,23 @@ but has since diverged quite a bit as it has been modified to fulfill our needs:
 
 > You must provide a `.env.docker` file in the root of your project. This file may contain variables to configure your instance.
 
-Simply run `npm run start:docker` and it will install dependencies, build and run the container.
+Run `npm run start:docker` to build and run the project with its containers.
 
-Or alternatively you can build the image yourself and run it:
+Alternatively you can build the image yourself and run it:
 
 ```bash
-$ docker compose up --build
+$ docker compose up
 ```
 
 ### Linting
 
-This package uses [Eslint](https://eslint.org/) for linting. You can run the linter with `npm run lint`.
+This package uses [ESLint](https://eslint.org/) for linting. You can run the linter with `npm run lint`.\
+The ESLint config works out of the box with VS Codes [ESLint plugin](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
 
 ### Tests
 
-Run the tests with `npm test`. Additionally, you can run the tests in watch mode with `npm run test:watch`.
+Run the tests with `npm test`. Additionally, you can run the tests in watch mode with `npm run test:watch`.\
+They are configured to work out of the box with VS Codes [Jest plugin](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest).
 
 ## Limiting available scopes
 

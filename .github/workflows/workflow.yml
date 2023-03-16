@@ -1,43 +1,83 @@
-name: lint, test and build
+name: Workflow
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.15.0
           cache: "npm"
+          node-version: 18.15.0
       - run: npm ci
       - run: npm run lint
 
   test:
+    name: Test
     needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.15.0
           cache: "npm"
+          node-version: 18.15.0
       - run: npm ci
       - run: npm run test
 
   build:
-    needs: [lint, test]
+    name: Build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.15.0
           cache: "npm"
+          node-version: 18.15.0
       - run: npm ci
       - run: npm run build
+      - uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: latest
+          path: dist
+
+  release:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: "npm"
+          node-version: 18.15.0
+      - uses: actions/download-artifact@v3
+        with:
+          name: latest
+          path: dist
+      - run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - run: |
+          npx release-it --ci \
+                         --no-npm.publish \
+                         --github.release \
+                         --github.assets=$(npm pack --silent) \
+                         --github.autoGenerate \
+                         --git.commitMessage='chore: release v${version}' \
+                         --git.pushArgs=--follow-tags
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

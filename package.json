@@ -86,5 +86,6 @@
     "testEnvironmentOptions": {
       "url": "http://localhost/"
     }
-  }
+  },
+  "version": "0.0.1"
 }

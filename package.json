@@ -4,6 +4,12 @@
   "description": "A CDN service for frontend artifacts within the SAB infrastructure",
   "license": "AGPL-3.0-or-later",
   "main": "dist/index.js",
+  "files": [
+    ".env.example",
+    "dist",
+    "Dockerfile",
+    "docker-compose.yml"
+  ],
   "scripts": {
     "lint": "eslint .",
     "test": "jest",

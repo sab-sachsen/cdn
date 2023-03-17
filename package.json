@@ -16,7 +16,8 @@
     "test:watch": "jest --watchAll",
     "build": "ts-node --transpileOnly --logError ./esbuild.config.ts",
     "start": "nodemon",
-    "start:docker": "npm run build && docker compose up"
+    "prestart:docker": "npm run build",
+    "start:docker": "docker compose up"
   },
   "dependencies": {
     "@babel/core": "7.21.0",

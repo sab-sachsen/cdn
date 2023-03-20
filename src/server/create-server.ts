@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import serveDirectoryMetadata from './actions/serve-directory-metadata';
 import serveFileMetadata from './actions/serve-file-metadata';
 import serveFile from './actions/serve-file';
-import serveModule from './actions/serve-module';
 
 import allowQuery from './middleware/allow-query';
 import findEntry from './middleware/find-entry';
@@ -66,31 +65,6 @@ export default function createServer(): Application {
     app.use((req, res, next) => {
       if (req.query.meta != null) {
         metadataApp(req, res);
-      } else {
-        next();
-      }
-    });
-
-    // We need to route in this weird way because Express
-    // doesn't have a way to route based on query params.
-    const moduleApp = createApp(app => {
-      app.enable('strict routing');
-
-      app.get(
-        '*',
-        allowQuery(['module']),
-        validatePackagePathname,
-        validatePackageName,
-        validatePackageVersion,
-        validateFilename,
-        findEntry,
-        serveModule
-      );
-    });
-
-    app.use((req, res, next) => {
-      if (req.query.module != null) {
-        moduleApp(req, res);
       } else {
         next();
       }

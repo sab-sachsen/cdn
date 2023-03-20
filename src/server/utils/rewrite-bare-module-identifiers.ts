@@ -2,7 +2,7 @@ import { transform } from '@babel/core';
 
 import unpkgRewrite from '../plugins/unpkg-rewrite';
 
-const origin = process.env.ORIGIN || 'https://unpkg.com';
+const origin = process.env.ORIGIN || 'http://localhost';
 
 export default function rewriteBareModuleIdentifiers(
   code: string,

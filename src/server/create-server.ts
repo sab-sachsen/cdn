@@ -96,11 +96,6 @@ export default function createServer(): Application {
       }
     });
 
-    // Send old */ requests to the new /browse UI.
-    app.get('*/', (req, res) => {
-      res.redirect(302, '/browse' + req.url);
-    });
-
     app.get(
       '*',
       noQuery(),

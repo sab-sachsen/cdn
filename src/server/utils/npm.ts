@@ -18,24 +18,36 @@ const npmAuthPassword = process.env.NPM_AUTH_PASSWORD;
 const auth = npmAuthToken
   ? `Bearer ${npmAuthToken}`
   : npmAuthUsername && npmAuthPassword
-  ? `Basic ${Buffer.from(`${npmAuthUsername}:${npmAuthPassword}`).toString(
+    ? `Basic ${Buffer.from(`${npmAuthUsername}:${npmAuthPassword}`).toString(
       'base64'
     )}`
-  : undefined;
+    : undefined;
 
 const agent = new https.Agent({
   keepAlive: true
 });
 
-const oneMegabyte = 1024 * 1024;
-const oneSecond = 1000;
-const oneMinute = oneSecond * 60;
+function createLRUCacheConfig(max: unknown, maxSize: unknown, ttl: unknown): LRUCache.Options<string, string, unknown> {
+  const oneMegabyte = 1024 * 1024;
+  const oneMinute = 1000 * 60;
+  const ret: LRUCache.Options<string, string, unknown> = {};
 
-const cache = new LRUCache({
-  maxSize: oneMegabyte * 40,
-  sizeCalculation: Buffer.byteLength,
-  ttl: oneSecond
-});
+  ret.ttl = Number(ttl ?? oneMinute);
+  if (max && maxSize) {
+    ret.max = Number(max);
+    ret.maxSize = Number(maxSize);
+  }
+  if (max && !maxSize)
+    ret.max = Number(max);
+  if (!max && maxSize)
+    ret.maxSize = Number(maxSize);
+  if (!max && !maxSize)
+    ret.maxSize = oneMegabyte * 250;
+
+  return ret;
+}
+
+const cache = new LRUCache<string, string>(createLRUCacheConfig(process.env.LRUCacheMax, process.env.LRUCacheMaxSize, process.env.LRUCacheTtl));
 
 const notFound = '0';
 
@@ -122,8 +134,8 @@ export async function getVersionsAndTags(
   packageName: string,
   log: Log
 ): Promise<VersionsAndTags | null> {
-  const cacheKey = `versions-${packageName}` as BufferEncoding;
-  const cacheValue = cache.get(cacheKey) as string | null;
+  const cacheKey = `versions-${packageName}`;
+  const cacheValue = cache.get(cacheKey);
 
   if (cacheValue != null) {
     return cacheValue === notFound ? null : JSON.parse(cacheValue);
@@ -131,12 +143,12 @@ export async function getVersionsAndTags(
 
   const value = await fetchVersionsAndTags(packageName, log);
 
-  if (value == null) {
-    cache.set(cacheKey, notFound, { ttl: 5 * oneMinute });
+  if (value === null) {
+    cache.set(cacheKey, notFound);
     return null;
   }
 
-  cache.set(cacheKey, JSON.stringify(value), { ttl: oneMinute });
+  cache.set(cacheKey, JSON.stringify(value));
   return value;
 }
 
@@ -184,8 +196,8 @@ export async function getPackageConfig(
   version: string,
   log: Log
 ): Promise<PackageConfig | null> {
-  const cacheKey = `config-${packageName}-${version}` as BufferEncoding;
-  const cacheValue = cache.get(cacheKey) as string | null;
+  const cacheKey = `config-${packageName}-${version}`;
+  const cacheValue = cache.get(cacheKey);
 
   if (cacheValue != null) {
     return cacheValue === notFound ? null : JSON.parse(cacheValue);
@@ -194,11 +206,11 @@ export async function getPackageConfig(
   const value = await fetchPackageConfig(packageName, version, log);
 
   if (value == null) {
-    cache.set(cacheKey, notFound, { ttl: 5 * oneMinute });
+    cache.set(cacheKey, notFound);
     return null;
   }
 
-  cache.set(cacheKey, JSON.stringify(value), { ttl: oneMinute });
+  cache.set(cacheKey, JSON.stringify(value));
   return value;
 }
 

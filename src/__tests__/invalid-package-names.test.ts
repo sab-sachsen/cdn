@@ -1,3 +1,14 @@
+// in order to get the changed process.env applied, we have to mock the
+// implementation to reset the module for each `createServer` call
+jest.mock('../server/middleware/validate-package-name', () => ({
+  __esModule: true,
+  default: jest.fn((...args: unknown[]) =>
+    jest
+      .requireActual('../server/middleware/validate-package-name')
+      .default(...args)
+  )
+}));
+
 import request from 'supertest';
 import createServer from '../server/create-server';
 

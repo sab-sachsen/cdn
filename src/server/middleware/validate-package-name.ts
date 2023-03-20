@@ -6,10 +6,10 @@ function isHash(value: string): boolean {
   return value.length === 32 && hexValue.test(value);
 }
 
+const scopes = process.env.SCOPES?.split(' ') ?? [];
 function isScopeAllowed(value: string): boolean {
-  const scopes = process.env.SCOPES?.split(' ') || [];
   const [scope] = value.split('/');
-  return scopes.length < 1 || scopes.some(allowed => scope === allowed);
+  return scopes.length < 1 || scopes.includes(scope);
 }
 
 /**

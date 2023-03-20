@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "lib": ["ES2021"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "ES2021",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "target": "ES2022",
     "strict": true
   },
   "ts-node": {

@@ -1,5 +1,6 @@
-import type { IncomingMessage } from 'node:http';
-import https, { type RequestOptions } from 'node:https';
+import type { IncomingMessage, RequestOptions } from 'node:http';
+import { Agent as HttpAgent } from 'node:http';
+import { Agent as HttpsAgent } from 'node:https';
 import url from 'node:url';
 
 import gunzip from 'gunzip-maybe';
@@ -10,6 +11,7 @@ import type { PackageConfig } from '../types/package-config.type';
 
 import { createLRUCacheConfig } from './cache-config';
 import bufferStream from './buffer-stream';
+import { satisfies } from 'semver';
 
 const npmRegistryURL =
   process.env.NPM_REGISTRY_URL || 'https://registry.npmjs.org';
@@ -24,10 +26,6 @@ const auth = npmAuthToken
     )}`
   : undefined;
 
-const agent = new https.Agent({
-  keepAlive: true
-});
-
 // create and configure cache
 const { LRUCacheMax, LRUCacheMaxSize, LRUCacheTTL } = process.env;
 export const cacheConfig = createLRUCacheConfig({
@@ -41,7 +39,7 @@ const notFound = '0';
 
 async function get(options: RequestOptions): Promise<IncomingMessage> {
   return new Promise((accept, reject) => {
-    https.get(options, accept).on('error', reject);
+    http.get(options, accept).on('error', reject);
   });
 }
 
@@ -64,16 +62,19 @@ async function fetchPackageInfo(
 
   log.debug('Fetching package info for %s from %s', packageName, infoURL);
 
-  const { hostname, pathname } = url.parse(infoURL);
-  const options = {
-    agent: agent,
-    hostname: hostname,
-    path: pathname,
-    headers: {
-      Accept: 'application/json',
-      Authorization: auth
-    }
+  const { hostname, pathname: path, port, protocol } = url.parse(infoURL);
+  const Agent = protocol === 'https' ? HttpsAgent : HttpAgent;
+  const agent = new Agent({ keepAlive: true });
+  const options: RequestOptions = {
+    agent,
+    hostname,
+    port,
+    path,
+    headers: { Accept: 'application/json' }
   };
+  if (auth !== undefined) {
+    options.headers = { ...options.headers, Authorization: auth };
+  }
 
   const res = await get(options);
 
@@ -219,15 +220,13 @@ export async function getPackage(
 
   log.debug('Fetching package for %s from %s', packageName, tarballURL);
 
-  const { hostname, pathname } = url.parse(tarballURL);
-  const options = {
-    agent: agent,
-    hostname: hostname,
-    path: pathname,
-    headers: {
-      Authorization: auth
-    }
-  };
+  const { hostname, pathname: path, port, protocol } = url.parse(tarballURL);
+  const Agent = protocol === 'https' ? HttpsAgent : HttpAgent;
+  const agent = new Agent({ keepAlive: true });
+  const options: RequestOptions = { agent, hostname, port, path };
+  if (auth !== undefined) {
+    options.headers = { ...options.headers, Authorization: auth };
+  }
 
   const res = await get(options);
 

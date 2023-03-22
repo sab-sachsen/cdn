@@ -32,7 +32,7 @@ export default function createServer(): Application {
     }
 
     app.use(cors());
-    app.use(express.static('public', { maxAge: '1y' }));
+    app.use(express.static('dist', { maxAge: '1y' }));
 
     app.use(requestLog);
 

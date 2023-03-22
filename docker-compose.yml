@@ -6,37 +6,51 @@ networks:
   localnet: {}
 
 volumes:
-  sab-registry-data: {}
+  sab-cdn-registry-data: {}
 
 services:
   registry:
     build:
-      context: sab-registry.Dockerfile
+      context: docker/registry
     pull_policy: build
-    image: sab-registry:latest
-    container_name: sab-registry
+    image: sab-cdn-registry:latest
+    container_name: sab-cdn-registry
+    init: true
     networks:
       - localnet
     volumes:
-      - sab-registry-data:/verdaccio/storage
+      - sab-cdn-registry-data:/verdaccio/storage
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:4873 || exit 1
+      test:
+        [
+          'CMD',
+          'wget --no-verbose --tries=1 --spider http://localhost:4873'
+        ]
       start_period: 3s
       interval: 1s
       timeout: 3s
       retries: 30
     restart: unless-stopped
-    env_file: .env.docker
+    environment:
+      - NPM_REGISTRY_URL=https://registry.npmjs.org
+      # Either set an (bearer) auth token
+      # - NPM_AUTH_TOKEN=auth-token
+      # Or use username and password (basic) auth
+      # - NPM_AUTH_USERNAME=username
+      # - NPM_AUTH_PASSWORD=password
 
   server:
     build:
-      context: sab-server.Dockerfile
+      context: .
+      dockerfile: docker/cdn/Dockerfile
       args:
         - PORT=8080
     pull_policy: build
-    image: sab-cdn:latest
-    container_name: sab-cdn
+    image: sab-cdn-server:latest
+    container_name: sab-cdn-server
     init: true
+    networks:
+      - localnet
     restart: unless-stopped
     environment:
       # Limit the allowed package scopes.
@@ -45,11 +59,7 @@ services:
       # Omit the value to allow all scopes.
       # - SCOPES=@my-scope
       - ORIGIN=http://localhost
-      - NPM_REGISTRY_URL=https://registry.npmjs.org
-      # Either set an (bearer) auth token
-      - NPM_AUTH_TOKEN
-      # Or use username and password (basic) auth
-      # - NPM_AUTH_USERNAME
-      # - NPM_AUTH_PASSWORD
+      # MAKE SURE TO OMIT THE TRAILING SLASH!
+      - NPM_REGISTRY_URL=http://registry:4873
     ports:
       - 9000:8080

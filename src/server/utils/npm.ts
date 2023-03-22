@@ -8,6 +8,7 @@ import LRUCache from 'lru-cache';
 import type { Log } from '../types/log.types';
 import type { PackageConfig } from '../types/package-config.type';
 
+import { createLRUCacheConfig } from './cache-config';
 import bufferStream from './buffer-stream';
 
 const npmRegistryURL =
@@ -18,36 +19,23 @@ const npmAuthPassword = process.env.NPM_AUTH_PASSWORD;
 const auth = npmAuthToken
   ? `Bearer ${npmAuthToken}`
   : npmAuthUsername && npmAuthPassword
-    ? `Basic ${Buffer.from(`${npmAuthUsername}:${npmAuthPassword}`).toString(
+  ? `Basic ${Buffer.from(`${npmAuthUsername}:${npmAuthPassword}`).toString(
       'base64'
     )}`
-    : undefined;
+  : undefined;
 
 const agent = new https.Agent({
   keepAlive: true
 });
 
-function createLRUCacheConfig(max: unknown, maxSize: unknown, ttl: unknown): LRUCache.Options<string, string, unknown> {
-  const oneMegabyte = 1024 * 1024;
-  const oneMinute = 1000 * 60;
-  const ret: LRUCache.Options<string, string, unknown> = {};
-
-  ret.ttl = Number(ttl ?? oneMinute);
-  if (max && maxSize) {
-    ret.max = Number(max);
-    ret.maxSize = Number(maxSize);
-  }
-  if (max && !maxSize)
-    ret.max = Number(max);
-  if (!max && maxSize)
-    ret.maxSize = Number(maxSize);
-  if (!max && !maxSize)
-    ret.maxSize = oneMegabyte * 250;
-
-  return ret;
-}
-
-const cache = new LRUCache<string, string>(createLRUCacheConfig(process.env.LRUCacheMax, process.env.LRUCacheMaxSize, process.env.LRUCacheTtl));
+// create and configure cache
+const { LRUCacheMax, LRUCacheMaxSize, LRUCacheTTL } = process.env;
+export const cacheConfig = createLRUCacheConfig({
+  max: LRUCacheMax ? Number(LRUCacheMax) : undefined,
+  maxSize: LRUCacheMaxSize ? Number(LRUCacheMaxSize) : undefined,
+  ttl: LRUCacheTTL ? Number(LRUCacheTTL) : undefined
+});
+const cache = new LRUCache<string, string>(cacheConfig);
 
 const notFound = '0';
 
@@ -169,7 +157,9 @@ const packageConfigExcludeKeys = [
 function cleanPackageConfig(config: PackageConfig): PackageConfig {
   return Object.keys(config).reduce((memo, key) => {
     if (!key.startsWith('_') && !packageConfigExcludeKeys.includes(key)) {
-      memo[key as keyof PackageConfig] = config[key as keyof PackageConfig] as any;
+      memo[key as keyof PackageConfig] = config[
+        key as keyof PackageConfig
+      ] as any;
     }
 
     return memo;

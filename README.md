@@ -29,7 +29,7 @@ but has since diverged quite a bit as it has been modified to fulfill our needs:
 
 ### Run in Docker
 
-> You must provide a `.env.docker` file in the root of your project. This file may contain variables to configure your instance.
+> You must provide NPM_AUTH_* env vars. You may edit those in the docker-compose file.
 
 Run `npm run start:docker` to build and run the project with its containers.
 

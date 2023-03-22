@@ -13,6 +13,18 @@ services:
     container_name: sab-cdn
     init: true
     restart: unless-stopped
-    env_file: .env.docker
+    environment:
+      # Limit the allowed package scopes.
+      # To allow only the @my-scope scope, set this to @my-scope.
+      # To allow multiple scopes, provide space separated values: `@my-scope @my-other-scope`.
+      # Omit the value to allow all scopes.
+      # - SCOPES=@my-scope
+      - ORIGIN=http://localhost
+      - NPM_REGISTRY_URL=https://registry.npmjs.org
+      # Either set an (bearer) auth token
+      - NPM_AUTH_TOKEN
+      # Or use username and password (basic) auth
+      # - NPM_AUTH_USERNAME
+      # - NPM_AUTH_PASSWORD
     ports:
       - 9000:8080

@@ -27,22 +27,30 @@ const agent = new https.Agent({
   keepAlive: true
 });
 
-function createLRUCacheConfig(max: unknown, maxSize: unknown, ttl: unknown): LRUCache.Options<string, string, unknown> {
+export function createLRUCacheConfig(max?: unknown, maxSize?: unknown, ttl?: unknown): LRUCache.Options<string, string, unknown> {
   const oneMegabyte = 1024 * 1024;
   const oneMinute = 1000 * 60;
+  // eslint-disable-next-line
+  //@ts-ignore
   const ret: LRUCache.Options<string, string, unknown> = {};
 
-  ret.ttl = Number(ttl ?? oneMinute);
+  ret.ttl = Number(ttl ?? oneMinute * 5);
   if (max && maxSize) {
     ret.max = Number(max);
     ret.maxSize = Number(maxSize);
+    ret.sizeCalculation = (value) => value.length;
   }
-  if (max && !maxSize)
+  if (max && !maxSize) {
     ret.max = Number(max);
-  if (!max && maxSize)
+  }
+  if (!max && maxSize) {
     ret.maxSize = Number(maxSize);
-  if (!max && !maxSize)
+    ret.sizeCalculation = (value) => value.length;
+  }
+  if (!max && !maxSize) {
     ret.maxSize = oneMegabyte * 250;
+    ret.sizeCalculation = (value) => value.length;
+  }
 
   return ret;
 }

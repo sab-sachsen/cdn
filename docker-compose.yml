@@ -2,10 +2,35 @@ version: '3.9'
 
 name: sab-cdn
 
+networks:
+  localnet: {}
+
+volumes:
+  sab-registry-data: {}
+
 services:
+  registry:
+    build:
+      context: sab-registry.Dockerfile
+    pull_policy: build
+    image: sab-registry:latest
+    container_name: sab-registry
+    networks:
+      - localnet
+    volumes:
+      - sab-registry-data:/verdaccio/storage
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:4873 || exit 1
+      start_period: 3s
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    env_file: .env.docker
+
   server:
     build:
-      context: .
+      context: sab-server.Dockerfile
       args:
         - PORT=8080
     pull_policy: build

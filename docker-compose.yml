@@ -32,12 +32,13 @@ services:
       retries: 30
     restart: unless-stopped
     environment:
-      - NPM_REGISTRY_URL=https://registry.npmjs.org
+      - UPLINK_REGISTRY_URL=https://registry.npmjs.org
+      # Do not forget to align the config file as well: docker/registry/config.yaml
       # Either set an (bearer) auth token
-      # - NPM_AUTH_TOKEN=auth-token
+      # - UPLINK_AUTH_TOKEN=auth-token
       # Or use username and password (basic) auth
-      # - NPM_AUTH_USERNAME=username
-      # - NPM_AUTH_PASSWORD=password
+      # - UPLINK_AUTH_USERNAME=username
+      # - UPLINK_AUTH_PASSWORD=password
 
   server:
     depends_on:
@@ -58,7 +59,7 @@ services:
       # Limit the allowed package scopes.
       # To allow only the @my-scope scope, set this to @my-scope.
       # To allow multiple scopes, provide space separated values: `@my-scope @my-other-scope`.
-      # Omit the value to allow all scopes.
+      # Omit the environment variable to allow all scopes.
       # - SCOPES=@my-scope
       - ORIGIN=http://localhost
       # MAKE SURE TO OMIT THE TRAILING SLASH!

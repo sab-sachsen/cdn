@@ -1,7 +1,5 @@
-import type { IncomingMessage, RequestOptions } from 'node:http';
-import { Agent as HttpAgent } from 'node:http';
-import { Agent as HttpsAgent } from 'node:https';
-import url from 'node:url';
+import { Readable } from 'node:stream';
+import type Fetch from 'node-fetch';
 
 import gunzip from 'gunzip-maybe';
 import LRUCache from 'lru-cache';
@@ -10,8 +8,8 @@ import type { Log } from '../types/log.types';
 import type { PackageConfig } from '../types/package-config.type';
 
 import { createLRUCacheConfig } from './cache-config';
-import bufferStream from './buffer-stream';
-import { satisfies } from 'semver';
+
+declare const fetch: typeof Fetch;
 
 const npmRegistryURL =
   process.env.NPM_REGISTRY_URL || 'https://registry.npmjs.org';
@@ -37,12 +35,6 @@ const cache = new LRUCache<string, string>(cacheConfig);
 
 const notFound = '0';
 
-async function get(options: RequestOptions): Promise<IncomingMessage> {
-  return new Promise((accept, reject) => {
-    http.get(options, accept).on('error', reject);
-  });
-}
-
 function isScopedPackageName(packageName: string): boolean {
   return packageName.startsWith('@');
 }
@@ -62,42 +54,32 @@ async function fetchPackageInfo(
 
   log.debug('Fetching package info for %s from %s', packageName, infoURL);
 
-  const { hostname, pathname: path, port, protocol } = url.parse(infoURL);
-  const Agent = protocol === 'https' ? HttpsAgent : HttpAgent;
-  const agent = new Agent({ keepAlive: true });
-  const options: RequestOptions = {
-    agent,
-    hostname,
-    port,
-    path,
-    headers: { Accept: 'application/json' }
-  };
-  if (auth !== undefined) {
-    options.headers = { ...options.headers, Authorization: auth };
-  }
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (auth !== undefined) headers.Authorization = auth;
 
-  const res = await get(options);
+  try {
+    const res = await fetch(infoURL, { headers });
 
-  if (res.statusCode === 200) {
-    return bufferStream(res).then(buffer =>
-      JSON.parse(buffer.toString('utf-8'))
+    if (res.status === 200) {
+      return await res.json();
+    }
+
+    if (res.status === 404) {
+      return null;
+    }
+
+    log.error(
+      'Error fetching info for %s (status: %s)',
+      packageName,
+      res.status
     );
-  }
+    log.error(res.statusText);
 
-  if (res.statusCode === 404) {
+    return null;
+  } catch (error) {
+    log.error(error);
     return null;
   }
-
-  const content = (await bufferStream(res)).toString('utf-8');
-
-  log.error(
-    'Error fetching info for %s (status: %s)',
-    packageName,
-    res.statusCode
-  );
-  log.error(content);
-
-  return null;
 }
 
 type VersionsAndTags = {
@@ -220,35 +202,31 @@ export async function getPackage(
 
   log.debug('Fetching package for %s from %s', packageName, tarballURL);
 
-  const { hostname, pathname: path, port, protocol } = url.parse(tarballURL);
-  const Agent = protocol === 'https' ? HttpsAgent : HttpAgent;
-  const agent = new Agent({ keepAlive: true });
-  const options: RequestOptions = { agent, hostname, port, path };
-  if (auth !== undefined) {
-    options.headers = { ...options.headers, Authorization: auth };
-  }
+  const headers: Record<string, string> = {};
+  if (auth !== undefined) headers.Authorization = auth;
 
-  const res = await get(options);
+  try {
+    const res = await fetch(tarballURL, { headers });
 
-  if (res.statusCode === 200) {
-    const stream = res.pipe(gunzip());
-    // stream.pause();
-    return stream;
-  }
+    if (res.status === 200) {
+      return Readable.from(res.body).pipe(gunzip());
+    }
 
-  if (res.statusCode === 404) {
+    if (res.status === 404) {
+      return null;
+    }
+
+    log.error(
+      'Error fetching tarball for %s@%s (status: %s)',
+      packageName,
+      version,
+      res.status
+    );
+    log.error(res.statusText);
+
+    return null;
+  } catch (error) {
+    log.error(error);
     return null;
   }
-
-  const content = (await bufferStream(res)).toString('utf-8');
-
-  log.error(
-    'Error fetching tarball for %s@%s (status: %s)',
-    packageName,
-    version,
-    res.statusCode
-  );
-  log.error(content);
-
-  return null;
 }

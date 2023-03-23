@@ -11,6 +11,9 @@ auth:
 uplinks:
   upstream:
     url: "${UPLINK_REGISTRY_URL}"
+    auth:
+      type: bearer
+      token_env: UPLINK_AUTH_TOKEN
 
 packages:
   '"**"':

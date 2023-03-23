@@ -7,7 +7,7 @@
   "files": [
     ".env.example",
     "dist",
-    "Dockerfile",
+    "docker",
     "docker-compose.yml"
   ],
   "scripts": {

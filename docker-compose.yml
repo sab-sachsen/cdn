@@ -40,6 +40,8 @@ services:
       # - NPM_AUTH_PASSWORD=password
 
   server:
+    depends_on:
+      - registry
     build:
       context: .
       dockerfile: docker/cdn/Dockerfile

@@ -18,8 +18,8 @@ const options: BuildOptions = {
       patterns: ['./dist/*']
     }),
     copyStaticFiles({
-      src: './public',
-      dest: './dist/'
+      src: 'public',
+      dest: 'dist/'
     })
   ]
 };

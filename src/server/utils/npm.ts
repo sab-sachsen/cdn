@@ -25,11 +25,11 @@ const auth = npmAuthToken
   : undefined;
 
 // create and configure cache
-const { LRUCacheMax, LRUCacheMaxSize, LRUCacheTTL } = process.env;
+const { LRU_CACHE_MAX, LRU_CACHE_MAX_SIZE, LRU_CACHE_TTL } = process.env;
 export const cacheConfig = createLRUCacheConfig({
-  max: LRUCacheMax ? Number(LRUCacheMax) : undefined,
-  maxSize: LRUCacheMaxSize ? Number(LRUCacheMaxSize) : undefined,
-  ttl: LRUCacheTTL ? Number(LRUCacheTTL) : undefined
+  max: LRU_CACHE_MAX ? Number(LRU_CACHE_MAX) : undefined,
+  maxSize: LRU_CACHE_MAX_SIZE ? Number(LRU_CACHE_MAX_SIZE) : undefined,
+  ttl: LRU_CACHE_TTL ? Number(LRU_CACHE_TTL) : undefined
 });
 const cache = new LRUCache<string, string>(cacheConfig);
 

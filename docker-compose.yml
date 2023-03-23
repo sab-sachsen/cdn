@@ -64,5 +64,9 @@ services:
       - ORIGIN=http://localhost
       # MAKE SURE TO OMIT THE TRAILING SLASH!
       - NPM_REGISTRY_URL=http://registry:4873
+      # The internal cache can be configured with this variables:
+      # - LRU_CACHE_MAX=40 # amount of overall cache items
+      # - LRU_CACHE_MAX_SIZE=262144000 # max size of the cache in bytes
+      # - LRU_CACHE_TTL=300000 # time to live for each cache item in ms
     ports:
       - 9000:8080

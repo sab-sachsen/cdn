@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import type { Log } from '../types/log.types';
 
-const enableDebugging = process.env.DEBUG != null;
+const enableDebugging = process.env.NODE_ENV === 'development';
 
 function createLog(): Log {
   return {

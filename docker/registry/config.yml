@@ -1,0 +1,13 @@
+storage: ./storage
+auth:
+  htpasswd:
+    file: ./htpasswd
+uplinks:
+  upstream:
+    url: "${NPM_REGISTRY_URL}"
+packages:
+  "**":
+    access: $all
+    publish: $authenticated
+    proxy: upstream
+log: { type: stdout, format: pretty, level: http }

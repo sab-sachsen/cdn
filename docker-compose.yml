@@ -35,7 +35,7 @@ services:
       - UPLINK_REGISTRY_URL=https://registry.npmjs.org
       # Do not forget to align the config file as well: docker/registry/config.yaml
       # Either set an (bearer) auth token
-      # - UPLINK_AUTH_TOKEN=auth-token
+      - UPLINK_AUTH_TOKEN
       # Or use username and password (basic) auth
       # - UPLINK_AUTH_USERNAME=username
       # - UPLINK_AUTH_PASSWORD=password

@@ -1,13 +1,32 @@
-storage: ./storage
+storage: /verdaccio/storage/data
+plugins: /verdaccio/plugins
+
+web:
+  title: SAB CDN
+
 auth:
   htpasswd:
-    file: ./htpasswd
+    file: /verdaccio/storage/htpasswd
+
 uplinks:
   upstream:
-    url: "${NPM_REGISTRY_URL}"
+    url: "${UPLINK_REGISTRY_URL}"
+    auth:
+      type: bearer
+      token_env: UPLINK_AUTH_TOKEN
+
 packages:
-  "**":
-    access: $all
-    publish: $authenticated
+  '"**"':
+    access: \$all
+    publish: \$authenticated
+    unpublish: \$authenticated
     proxy: upstream
+
+server:
+  keepAliveTimeout: 60
+
+middlewares:
+  audit:
+    enabled: true
+
 log: { type: stdout, format: pretty, level: http }

@@ -1,8 +1,8 @@
-FROM verdaccio/verdaccio:5.22.1
+FROM verdaccio/verdaccio:5.23.1
 USER root
 
 # add the config (template) file (with placeholders)
-ADD config.yml /verdaccio/conf/config.tpl.yaml
+ADD config.yml /verdaccio/conf/config.template.yaml
 
 # provide a custom entrypoint
 COPY dockerrun.sh /opt/verdaccio/dockerrun.sh

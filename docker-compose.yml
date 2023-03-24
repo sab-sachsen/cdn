@@ -16,7 +16,7 @@ services:
         - ghcr.io/sab-sachsen/sab-cdn-registry:${TAG:-latest}
         - ghcr.io/sab-sachsen/sab-cdn-registry:latest
     pull_policy: missing
-    image: sab-cdn-registry
+    image: ghcr.io/sab-sachsen/sab-cdn-registry
     container_name: sab-cdn-registry
     init: true
     networks:
@@ -55,7 +55,7 @@ services:
         - ghcr.io/sab-sachsen/sab-cdn-server:${TAG:-latest}
         - ghcr.io/sab-sachsen/sab-cdn-server:latest
     pull_policy: missing
-    image: sab-cdn-server
+    image: ghcr.io/sab-sachsen/sab-cdn-server
     container_name: sab-cdn-server
     init: true
     networks:

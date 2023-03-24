@@ -58,6 +58,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions: write-all
+    outputs:
+      version: ${{ steps.version.outputs.latest }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -71,10 +73,11 @@ jobs:
       - run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - id: version
+        run: echo "latest=$(npx release-it --release-version)" >> $GITHUB_OUTPUT
       - run: |
-          npm version --no-git-tag-version $(npx release-it --release-version)
-          asset=$(npm pack --silent)
-          git reset --hard HEAD
+          asset="sab-cdn.tgz"
+          mv $(npm pack --silent) ${asset}
           npx release-it --ci \
                          --no-npm.publish \
                          --github.release \
@@ -84,3 +87,26 @@ jobs:
                          --git.pushArgs=--follow-tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - run: echo "Released ${{ steps.version.latest }} :rocket:" >> $GITHUB_STEP_SUMMARY
+
+  publish:
+    name: Publish
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: latest
+          path: dist
+      - name: Build images
+        run: docker compose build
+        env:
+          TAG: ${{ needs.release.outputs.version }}
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+      - name: Push images
+        run: docker compose push --ignore-push-failures
+      - run: echo "Published images :rocket:" >> $GITHUB_STEP_SUMMARY

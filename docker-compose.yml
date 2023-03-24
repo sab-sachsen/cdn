@@ -12,8 +12,11 @@ services:
   registry:
     build:
       context: docker/registry
-    pull_policy: build
-    image: sab-cdn-registry:latest
+      tags:
+        - ghcr.io/sab-sachsen/sab-cdn-registry:${TAG:-latest}
+        - ghcr.io/sab-sachsen/sab-cdn-registry:latest
+    pull_policy: missing
+    image: sab-cdn-registry
     container_name: sab-cdn-registry
     init: true
     networks:
@@ -48,8 +51,11 @@ services:
       dockerfile: docker/cdn/Dockerfile
       args:
         - PORT=8080
-    pull_policy: build
-    image: sab-cdn-server:latest
+      tags:
+        - ghcr.io/sab-sachsen/sab-cdn-server:${TAG:-latest}
+        - ghcr.io/sab-sachsen/sab-cdn-server:latest
+    pull_policy: missing
+    image: sab-cdn-server
     container_name: sab-cdn-server
     init: true
     networks:
@@ -61,7 +67,6 @@ services:
       # To allow multiple scopes, provide space separated values: `@my-scope @my-other-scope`.
       # Omit the environment variable to allow all scopes.
       # - SCOPES=@my-scope
-      - ORIGIN=http://localhost
       # MAKE SURE TO OMIT THE TRAILING SLASH!
       - NPM_REGISTRY_URL=http://registry:4873
       # The internal cache can be configured with this variables:

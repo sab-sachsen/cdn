@@ -12,11 +12,8 @@ services:
   registry:
     build:
       context: docker/registry
-      tags:
-        - ghcr.io/sab-sachsen/sab-cdn-registry:${TAG:-latest}
-        - ghcr.io/sab-sachsen/sab-cdn-registry:latest
     pull_policy: missing
-    image: ghcr.io/sab-sachsen/sab-cdn-registry
+    image: ghcr.io/sab-sachsen/sab-cdn-registry:${TAG:-latest}
     container_name: sab-cdn-registry
     init: true
     networks:
@@ -51,11 +48,8 @@ services:
       dockerfile: docker/cdn/Dockerfile
       args:
         - PORT=8080
-      tags:
-        - ghcr.io/sab-sachsen/sab-cdn-server:${TAG:-latest}
-        - ghcr.io/sab-sachsen/sab-cdn-server:latest
     pull_policy: missing
-    image: ghcr.io/sab-sachsen/sab-cdn-server
+    image: ghcr.io/sab-sachsen/sab-cdn-server:${TAG:-latest}
     container_name: sab-cdn-server
     init: true
     networks:

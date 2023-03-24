@@ -101,12 +101,12 @@ jobs:
         with:
           name: latest
           path: dist
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Build images
         run: docker compose build
         env:
           TAG: ${{ needs.release.outputs.version }}
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push images
         run: docker compose push --ignore-push-failures
       - run: echo "Published images :rocket:" >> $GITHUB_STEP_SUMMARY

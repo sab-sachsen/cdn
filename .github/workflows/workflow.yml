@@ -72,9 +72,8 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: |
-          npm version --no-git-tag-version $(npx release-it --release-version)
-          asset=$(npm pack --silent)
-          git reset --hard HEAD
+          asset="sab-cdn.tgz"
+          mv $(npm pack --silent) ${asset}
           npx release-it --ci \
                          --no-npm.publish \
                          --github.release \

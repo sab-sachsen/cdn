@@ -87,7 +87,7 @@ jobs:
                          --git.pushArgs=--follow-tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - run: echo "Released ${{ steps.version.latest }} :rocket:" >> $GITHUB_STEP_SUMMARY
+      - run: echo "Released ${{ steps.version.outputs.latest }} :rocket:" >> $GITHUB_STEP_SUMMARY
 
   publish:
     name: Publish
@@ -104,10 +104,16 @@ jobs:
           path: dist
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-      - name: Build images
-        run: docker compose build
+      - name: Build and push ${TAG}
+        run: |
+          docker compose build
+          docker compose push
         env:
           TAG: ${{ needs.release.outputs.version }}
-      - name: Push images
-        run: docker compose push
-      - run: echo "Published images :ship:" >> $GITHUB_STEP_SUMMARY
+      - name: Build and push ${TAG}
+        run: |
+          docker compose build
+          docker compose push
+        env:
+          TAG: latest
+      - run: echo "Published images ${{ needs.release.outputs.version }} and latest :ship:" >> $GITHUB_STEP_SUMMARY

@@ -102,7 +102,7 @@ jobs:
           name: latest
           path: dist
       - name: Build images
-        run: docker compose build"
+        run: docker compose build
         env:
           TAG: ${{ needs.release.outputs.version }}
       - name: Log in to registry

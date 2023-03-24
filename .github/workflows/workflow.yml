@@ -109,5 +109,5 @@ jobs:
         env:
           TAG: ${{ needs.release.outputs.version }}
       - name: Push images
-        run: docker compose push --ignore-push-failures
-      - run: echo "Published images :rocket:" >> $GITHUB_STEP_SUMMARY
+        run: docker compose push
+      - run: echo "Published images :ship:" >> $GITHUB_STEP_SUMMARY

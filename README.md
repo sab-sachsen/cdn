@@ -25,18 +25,17 @@ but has since diverged quite a bit as it has been modified to fulfill our needs:
 - Use correct Node version, as declared in [`.nvmrc`](.nvmrc) or [`package.json`](package.json): `nvm use`.
 - Install dependencies: `npm install`
 - Build: `npm run build` or
-- Start locally in node: `npm start`
+- Start locally in node: `node dist/index.js`
 
 ### Run in Docker
 
-> You must provide NPM_AUTH_* env vars. You may edit those in the docker-compose file.
+> You must provide UPLINK_* env vars. You may edit those in the docker-compose file.
 
-Run `npm run start:docker` to build and run the project with its containers.
-
-Alternatively you can build the image yourself and run it:
+You build the server and the image yourself and run it:
 
 ```bash
-$ docker compose up
+$ npm run build
+$ docker compose up --build
 ```
 
 ### Linting

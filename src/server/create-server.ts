@@ -1,6 +1,7 @@
+import { join } from 'node:path';
+
 import cors from 'cors';
-import { sep } from 'path';
-import express, { type Application } from 'express';
+import express, { type Application, static as staticRes } from 'express';
 import morgan from 'morgan';
 
 import serveDirectoryMetadata from './actions/serve-directory-metadata';
@@ -33,7 +34,7 @@ export default function createServer(): Application {
     }
 
     app.use(cors());
-    app.use(express.static(__dirname + sep + 'public', { maxAge: '1y' }));
+    app.use(staticRes(join(__dirname, 'public'), { maxAge: '1y' }));
 
     app.use(requestLog);
 

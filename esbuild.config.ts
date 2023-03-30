@@ -19,7 +19,7 @@ const options: BuildOptions = {
     }),
     copyStaticFiles({
       src: 'public',
-      dest: 'dist/'
+      dest: 'dist/public'
     })
   ]
 };

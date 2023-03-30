@@ -1,4 +1,5 @@
 import cors from 'cors';
+import { sep } from 'path';
 import express, { type Application } from 'express';
 import morgan from 'morgan';
 
@@ -32,7 +33,7 @@ export default function createServer(): Application {
     }
 
     app.use(cors());
-    app.use(express.static('dist', { maxAge: '1y' }));
+    app.use(express.static(__dirname + sep + 'public', { maxAge: '1y' }));
 
     app.use(requestLog);
 

@@ -11,13 +11,11 @@
     "docker-compose.yml"
   ],
   "scripts": {
-    "lint": "eslint .",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
     "build": "ts-node --transpileOnly --logError ./esbuild.config.ts",
-    "start": "nodemon",
-    "prestart:docker": "npm run build",
-    "start:docker": "docker compose up"
+    "lint": "eslint .",
+    "start": "node dist/index.js",
+    "test:watch": "jest --watchAll",
+    "test": "jest"
   },
   "dependencies": {
     "@types/gunzip-maybe": "1.4.0",
@@ -55,7 +53,6 @@
     "eslint-plugin-import": "2.27.5",
     "git-rev-sync": "3.0.2",
     "jest": "29.5.0",
-    "nodemon": "2.0.21",
     "supertest": "6.3.3",
     "ts-jest": "29.0.5",
     "ts-node": "10.9.1",
